@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xylara</title>
-    <script src="/assets/js/proxy.js" defer></script>
     <script src="/baremux"></script>
     <script src="/epoxy"></script>
     <script src="/uv/uv.bundle.js"></script>
@@ -12,8 +11,125 @@
     <link rel="prefetch" href="/scram/scramjet.worker.js" />
     <link rel="prefetch" href="/scram/scramjet.shared.js" />
     <script src="/scram/scramjet.controller.js"></script>
-    <script src="/assets/js/encoding.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .search-container {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+        }
+    </style>
 </head>
 <body>
+    <form id="form">
+        <input id="input" placeholder="Search the Web Freely..." />
+        <button type="submit">Search</button>
+    </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+const input = document.getElementById("input");
+const form = document.getElementById("form");
+
+async function init() {
+    try {
+        const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+        const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+        if (localStorage.getItem("transport") == "epoxy") {
+            if (await connection.getTransport() !== "/epoxy/index.mjs") {
+                await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+            }
+        }
+        else {
+            if (await connection.getTransport() !== "/libcurl/index.mjs") {
+                await connection.setTransport("/libcurl/index.mjs", [{ wisp: wispUrl }]);
+            }
+        }
+
+    } catch (err) {
+        console.error("An error occurred while setting up baremux:", err);
+    }
+    
+    try {
+        const scramjet = new ScramjetController({
+            prefix: "/scram/service/",
+            files: {
+                wasm: "/scram/scramjet.wasm.js",
+                worker: "/scram/scramjet.worker.js",
+                client: "/scram/scramjet.client.js",
+                shared: "/scram/scramjet.shared.js",
+                sync: "/scram/scramjet.sync.js"
+            },
+            flags: {
+                syncxhr: true
+            }
+        });
+        window.sj = scramjet;
+        scramjet.init("/sw.js");
+
+    } catch (error) {
+        console.error("Error setting up uv & sj:", error);
+    }
+    
+    if (!localStorage.getItem("proxy")) {
+        localStorage.setItem("proxy", "uv");
+    }
+
+    try {
+        await navigator.serviceWorker.register("/sw.js");
+    } catch (err) {
+        throw new Error(err)
+    }
+}
+init();
+
+if (form && input) {
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        function isUrl(val = "") {
+            try {
+                new URL(val);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        event.preventDefault();
+
+        var url = input.value.trim();
+
+        if (!isUrl(url)) {
+            url = "https://duckduckgo.com/?q=" + encodeURIComponent(url);
+        } else if (!(url.startsWith("https://") || url.startsWith("http://"))) {
+            url = `https://${url}`;
+        }
+
+        if (localStorage.getItem("proxy") == "uv") {
+            url = __uv$config.prefix + __uv$config.encodeUrl(url);
+        }
+        else if (localStorage.getItem("proxy") == "sj") {
+            url = "/scram/service/" + encodeURIComponent(url);
+        }
+
+        window.location.href = url;
+    });
+}
+});
+</script>
 </body>
 </html>

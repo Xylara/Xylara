@@ -45,7 +45,7 @@ app.get("/", (req, res) => {
 
 app.get("*", (req, res) => {
     res.status(404);
-    res.sendFile(join(publicPath, "index.html"));
+    res.sendFile(join(publicPath, "404.html"));
 });
 
 server.on("request", (req, res) => {
