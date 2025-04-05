@@ -43,6 +43,10 @@ app.get("/", (req, res) => {
     res.sendFile(join(publicPath, "index.html"));
 });
 
+app.get("/proccy", (req, res) => {
+    res.sendFile(join(publicPath, "proccy.html"));
+});
+
 app.get("*", (req, res) => {
     res.status(404);
     res.sendFile(join(publicPath, "404.html"));
