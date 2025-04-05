@@ -1,30 +1,24 @@
 var form = document.getElementById("form");
 var input = document.getElementById("input");
-var discord = document.getElementById("discord");
-
-
-
 
 async function init() {
     try {
         const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
         const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+        
         if (localStorage.getItem("transport") == "epoxy") {
             if (await connection.getTransport() !== "/epoxy/index.mjs") {
                 await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
-                console.log("Using websocket transport. Wisp URL is: " + wispUrl);
             }
-        }
-        else {
+        } else {
             if (await connection.getTransport() !== "/libcurl/index.mjs") {
                 await connection.setTransport("/libcurl/index.mjs", [{ wisp: wispUrl }]);
-                console.log("Using websocket transport. Wisp URL is: " + wispUrl);
             }
         }
-
     } catch (err) {
-        console.error("An error occurred while setting up baremux:", err);
+        console.error("BareMux initialization error:", err);
     }
+
     try {
         const scramjet = new ScramjetController({
             prefix: "/scram/service/",
@@ -41,88 +35,42 @@ async function init() {
         });
         window.sj = scramjet;
         scramjet.init("/sw.js");
-
-
     } catch (error) {
-        console.error("Error setting up uv & sj:", error);
-    }
-    if (!localStorage.getItem("proxy")) {
-        localStorage.setItem("proxy", "uv");
-    }
-
-    try {
-        await navigator.serviceWorker.register("/sw.js");
-        console.log("Registering service worker...");
-    } catch (err) {
-        throw new Error(err)
+        console.error("Scramjet initialization error:", error);
     }
 }
+
 init();
 
 if (form && input) {
     form.addEventListener("submit", async (event) => {
-        function isUrl(val = "") {
-            if (
-                /^http(s?):\/\//.test(val) ||
-                (val.includes(".") && val.substr(0, 1) !== " ")
-            ) {
-                return true;
-            }
-            return false;
-        }
-
         event.preventDefault();
-
-        if (!localStorage.getItem("proxy")) {
-            localStorage.setItem("proxy", "uv");
-        }
-
-        try {
-            await navigator.serviceWorker.register("/sw.js");
-            console.log("Registering service worker...");
-        } catch (err) {
-            throw new Error(err)
-        }
-
+        
         var url = input.value.trim();
+        var isUrl = (val = "") => {
+            return /^http(s?):\/\//.test(val) || (val.includes(".") && val.substr(0, 1) !== " ");
+        };
 
         if (!isUrl(url)) {
-            if (localStorage.getItem("engine") == "google") {
-                url = "https://www.google.com/search?q=" + url;
-            }
-            else {
-                url = "https://duckduckgo.com/?t=h_&q=" + url;
-            }
-
+            url = "https://duckduckgo.com/?t=h_&q=" + url;
         } else if (!(url.startsWith("https://") || url.startsWith("http://"))) {
             url = `https://${url}`;
         }
 
         if (localStorage.getItem("proxy") == "uv") {
-            uvEncode();
-        }
-        else if (localStorage.getItem("proxy") == "sj") {
-            sjEncode();
-        }
-        else if (localStorage.getItem("proxy") == "rammerhead") {
-            rhEncode();
-        }
-
-
-        async function rhEncode() {
-            url = await RammerheadEncode(url);
-            window.location.href = "/" + url;
-        }
-        async function uvEncode() {
-            url = __uv$config.prefix + __uv$config.encodeUrl(url);
-            localStorage.setItem("url", url);
-            window.location.href = "/proccy";
-        }
-        async function sjEncode() {
-            url = "/scram/service/" + encodeURIComponent(url);
-            localStorage.setItem("url", url);
-            window.location.href = "/proccy";
+            await uvEncode(url);
+        } else if (localStorage.getItem("proxy") == "sj") {
+            await sjEncode(url);
         }
     });
+}
 
+async function uvEncode(url) {
+    const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
+    window.location.href = "/proccy";
+}
+
+async function sjEncode(url) {
+    const encodedUrl = "/scram/service/" + encodeURIComponent(url);
+    window.location.href = "/proccy";
 }
