@@ -1,0 +1,100 @@
+:root {
+    --primary-color: #00001A;
+    --secondary-color: #00FFFF;
+    --accent-color: #FFFFFF;
+    --neutral-color: #333333;
+    --gradient: linear-gradient(135deg, #00001A, #0A0A2E);
+    --border-radius: 1rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: var(--gradient);
+    color: var(--accent-color);
+    font-family: 'Inter', 'Arial', sans-serif;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.search-container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius);
+    padding: 1.5rem 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    border: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    margin: 1rem;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    transition: all 0.3s ease;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+button {
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, #6B286C, #4A175E);
+    color: var(--accent-color);
+    cursor: auto;
+    transition: all 0.3s ease;
+    margin-top: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--border-radius);
+    padding: 2px;
+    background: linear-gradient(135deg, #00FFFF, #6B286C);
+    transform: scale(1.05);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+button:hover::before {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .search-container {
+        padding: 1.5rem;
+    }
+    
+    input[type="text"] {
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
+    }
+}
