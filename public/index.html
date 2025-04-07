@@ -12,42 +12,15 @@
     <link rel="prefetch" href="/scram/scramjet.worker.js" />
     <link rel="prefetch" href="/scram/scramjet.shared.js" />
     <script src="/scram/scramjet.controller.js"></script>
-    <script src="https://unpkg.com/@rubynetwork/rammerhead-browser" defer></script>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        .search-container {
-            background-color: white;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 300px;
-        }
-        input[type="radio"] {
-            margin-right: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="./assets/css/main.css">
 </head>
 <body>
     <form id="form">
         <div class="search-container">
-            <input id="input" placeholder="Search the Web Freely..." />
-            <br>
-            <button type="submit">Search</button>
+            <input id="input" placeholder="Search the Web Freely..." type="text">
         </div>
     </form>
+
     <script>
         var form = document.getElementById("form");
         var input = document.getElementById("input");
