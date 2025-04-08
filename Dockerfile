@@ -1,5 +1,6 @@
 # specify the base image with your desired version
-FROM guergeiro/pnpm:22-9-alpine
+FROM node:23
 COPY . .
+RUN npm install -g pnpm
 RUN pnpm install
-CMD ["pnpm", "start"]
+CMD ["npm", "start"]
