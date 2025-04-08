@@ -1,9 +1,9 @@
 :root {
-    --primary-color: #00001A;
-    --secondary-color: #00FFFF;
-    --accent-color: #FFFFFF;
-    --neutral-color: #333333;
-    --gradient: linear-gradient(135deg, #00001A, #0A0A2E);
+    --primary-color: #0F172A;
+    --secondary-color: #38BDF8;
+    --accent-color: #F8F9FA;
+    --neutral-color: #6B7280;
+    --gradient: linear-gradient(135deg, #0F172A, #15202B);
     --border-radius: 1rem;
 }
 
@@ -25,17 +25,37 @@ body {
     backdrop-filter: blur(10px);
 }
 
+.container {
+    width: 90%;
+    max-width: 600px;
+    padding: 2rem;
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.search-container {
+    margin-bottom: 1.5rem;
+}
+
 input[type="text"] {
     width: 100%;
     padding: 1rem 1.5rem;
     font-size: 1.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--border-radius);
     background-color: rgba(255, 255, 255, 0.05);
     color: var(--accent-color);
     transition: all 0.3s ease;
     font-weight: 600;
     letter-spacing: 0.5px;
+    outline: none;
+}
+
+input[type="text"]:focus {
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    border-color: var(--secondary-color);
 }
 
 button {
@@ -45,14 +65,18 @@ button {
     font-weight: 600;
     border: none;
     border-radius: var(--border-radius);
-    background: linear-gradient(135deg, #6B286C, #4A175E);
+    background: linear-gradient(135deg, #38BDF8, #6366F1);
     color: var(--accent-color);
-    cursor: auto;
+    cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 1.5rem;
     position: relative;
     overflow: hidden;
     font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 button::before {
@@ -64,7 +88,7 @@ button::before {
     bottom: 0;
     border-radius: var(--border-radius);
     padding: 2px;
-    background: linear-gradient(135deg, #00FFFF, #6B286C);
+    background: linear-gradient(135deg, #00FFFF, #38BDF8);
     transform: scale(1.05);
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -74,62 +98,63 @@ button:hover::before {
     opacity: 1;
 }
 
-@media (max-width: 768px) {
-    input[type="text"] {
-        padding: 0.875rem 1.25rem;
-        font-size: 1rem;
-    }
-}
-
-
 .info-container {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    margin: 0 auto;
-    padding: 0.5rem;
-    background-color: rgba(255, 255, 255, 0.05);
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: transparent;
     border-radius: var(--border-radius);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    gap: 0.5rem;
-    margin-top: 1rem;
+    gap: 1rem;
+    backdrop-filter: blur(10px);
 }
 
 .info-container > div {
     flex: 1;
-    padding: 0.5rem;
-    background-color: rgba(255, 255, 255, 0.02);
+    padding: 1rem;
     border-radius: var(--border-radius);
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
-    width: 250px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    text-align: center;
+}
+
+.info-container h4 {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .info-container span {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 600;
-    color: var(--secondary-color);
     background: linear-gradient(45deg, var(--secondary-color), #00FFFF);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
+    overflow: hidden;
+    display: block;
 }
 
 @media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 1.5rem;
+    }
+    
+    .search-container {
+        margin-bottom: 1rem;
+    }
+    
     .info-container {
         flex-direction: column;
-        padding: 0.5rem;
-        width: 90%;
     }
     
     .info-container > div {
-        margin: 0.25rem 0;
-        padding: 0.5rem;
+        margin: 0.5rem 0;
+        padding: 1rem;
     }
 }

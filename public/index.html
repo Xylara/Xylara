@@ -14,25 +14,27 @@
     <link rel="stylesheet" href="./assets/css/main.css">
 </head>
 <body>
-    <form id="form">
-        <div class="search-container">
-            <input id="input" placeholder="Search the Web Freely..." type="text">
-        </div>
-        <div class="info-container">
-            <div class="proxy-info">
-                <h4>Proxy:</h4>
-                <span id="proxy-value"></span>
+    <div class="container">
+        <form id="form">
+            <div class="search-container">
+                <input id="input" placeholder="Search the Web Freely..." type="text">
             </div>
-            <div class="transport-info">
-                <h4>Transport:</h4>
-                <span id="transport-value"></span>
+            <div class="info-container">
+                <div class="proxy-info">
+                    <h4>Proxy:</h4>
+                    <span id="proxy-value"></span>
+                </div>
+                <div class="transport-info">
+                    <h4>Transport:</h4>
+                    <span id="transport-value"></span>
+                </div>
+                <div class="search-engine">
+                    <h4>Search Engine:</h4>
+                    <span id="search-engine-value">DuckDuckGo</span>
+                </div>
             </div>
-            <div class="search-engine">
-                <h4>Search Engine:</h4>
-                <span id="search-engine-value">DuckDuckGo</span>
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
     <script>
         var form = document.getElementById("form");
         var input = document.getElementById("input");
