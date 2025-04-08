@@ -1,11 +1,5 @@
-FROM octoblu/pnpm
-MAINTAINER Bob Example <bob@example.com>
-
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-
-COPY package.json /usr/src/app/
-RUN pnpm install --production --quiet
-COPY . /usr/src/app/
-
-CMD [ "pnpm", "start" ] 
+# specify the base image with your desired version
+FROM guergeiro/pnpm:latest-latest
+COPY . .
+RUN pnpm install
+CMD ["pnpm", "start"]
