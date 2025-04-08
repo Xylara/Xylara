@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM octoblu/pnpm
 
 WORKDIR /usr/src/app
 
