@@ -18,6 +18,20 @@
         <div class="search-container">
             <input id="input" placeholder="Search the Web Freely..." type="text">
         </div>
+        <div class="info-container">
+            <div class="proxy-info">
+                <h4>Proxy:</h4>
+                <span id="proxy-value"></span>
+            </div>
+            <div class="transport-info">
+                <h4>Transport:</h4>
+                <span id="transport-value"></span>
+            </div>
+            <div class="search-engine">
+                <h4>Search Engine:</h4>
+                <span id="search-engine-value">DuckDuckGo</span>
+            </div>
+        </div>
     </form>
     <script>
         var form = document.getElementById("form");
@@ -102,6 +116,17 @@
         localStorage.setItem("url", encodedUrl); 
         window.location.href = "/proccy";
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const proxyValue = localStorage.getItem("proxy") || "uv";
+    const transportValue = localStorage.getItem("transport") || "libcurl";
+    
+    const proxyElement = document.getElementById('proxy-value');
+    const proxyText = proxyValue === 'uv' ? 'Ulraviolet' : proxyValue === 'sj' ? 'Scramjet' : proxyValue;
+    proxyElement.textContent = proxyText;
+    
+    document.getElementById('transport-value').textContent = transportValue;
+});
 </script>
 </body>
 </html>
