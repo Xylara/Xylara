@@ -50,7 +50,7 @@
                 </div>
                 <div class="search-engine">
                     <h4>Search Engine:</h4>
-                    <span id="search-engine-value">DuckDuckGo</span>
+                    <span id="engine-value"></span>
                 </div>
             </div>
         </form>
@@ -101,31 +101,51 @@
     init();
 
     if (form && input) {
-        form.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            
-            var url = input.value.trim();
-            var isUrl = (val = "") => {
-                return /^http(s?):\/\//.test(val) || (val.includes(".") && val.substr(0, 1) !== " ");
-            };
+            form.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                
+                var url = input.value.trim();
+                var isUrl = (val = "") => {
+                    return /^http(s?):\/\//.test(val) || (val.includes(".") && val.substr(0, 1) !== " ");
+                };
 
-            if (!isUrl(url)) {
-                url = "https://duckduckgo.com/?t=h_&q=" + url;
-            } else if (!(url.startsWith("https://") || url.startsWith("http://"))) {
-                url = `https://${url}`;
-            }
+                if (!isUrl(url)) {
+                    // Get search engine from localStorage or default to duckduckgo
+                    const searchEngine = localStorage.getItem("searchEngine") || "duckduckgo";
+                    
+                    let searchUrl;
+                    switch(searchEngine) {
+                        case "google":
+                            searchUrl = `https://www.google.com/search?q=`;
+                            break;
+                        case "bing":
+                            searchUrl = `https://www.bing.com/search?q=`;
+                            break;
+                        case "brave":
+                            searchUrl = `https://search.brave.com/?q=`;
+                            break;
+                        case "duckduckgo":
+                        default:
+                            searchUrl = `https://duckduckgo.com/?t=h_&q=`;
+                            break;
+                    }
 
-            const proxyType = localStorage.getItem("proxy") || "uv";
-            localStorage.setItem("proxy", proxyType);
-            console.log("Proxy type set to localStorage:", proxyType);
+                    url = searchUrl + encodeURIComponent(url);
+                } else if (!(url.startsWith("https://") || url.startsWith("http://"))) {
+                    url = `https://${url}`;
+                }
 
-            if (proxyType == "sj") {
-                sjEncode(url);
-            } else if (proxyType == "uv") {
-                uvEncode(url);
-            }
-        });
-    }
+                const proxyType = localStorage.getItem("proxy") || "uv";
+                localStorage.setItem("proxy", proxyType);
+                console.log("Proxy type set to localStorage:", proxyType);
+
+                if (proxyType == "sj") {
+                    sjEncode(url);
+                } else if (proxyType == "uv") {
+                    uvEncode(url);
+                }
+            });
+        }
 
     async function uvEncode(url) {
         const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
@@ -142,12 +162,15 @@
     document.addEventListener('DOMContentLoaded', () => {
     const proxyValue = localStorage.getItem("proxy") || "uv";
     const transportValue = localStorage.getItem("transport") || "libcurl";
+    const engineValue = localStorage.getItem("searchEngine") || "duckduckgo";
     
     const proxyElement = document.getElementById('proxy-value');
     const proxyText = proxyValue === 'uv' ? 'Ulraviolet' : proxyValue === 'sj' ? 'Scramjet' : proxyValue;
     proxyElement.textContent = proxyText;
     
     document.getElementById('transport-value').textContent = transportValue;
+    document.getElementById('engine-value').textContent = engineValue;
+
 });
 </script>
 </body>
