@@ -13,12 +13,16 @@
     <link rel="prefetch" href="/scram/scramjet.shared.js" />
     <script src="/scram/scramjet.controller.js"></script>
     <link rel="stylesheet" href="./assets/css/main.css">
+    <link rel="stylesheet" href="./assets/css/topbar.css">
 </head>
 <body>
     <nav class="topbar">
         <div class="topbar-container">
             <a href="/" class="topbar-item">
                 <img src="./assets/svg/home.svg" alt="Home" class="home-icon">
+            </a>
+            <a href="/settings" class="topbar-item">
+                <img src="./assets/svg/settings.svg" alt="Settings" class="settings-icon">
             </a>
         </div>
     </nav>
@@ -110,7 +114,6 @@
                 };
 
                 if (!isUrl(url)) {
-                    // Get search engine from localStorage or default to duckduckgo
                     const searchEngine = localStorage.getItem("searchEngine") || "duckduckgo";
                     
                     let searchUrl;

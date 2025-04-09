@@ -47,6 +47,10 @@ app.get("/proccy", (req, res) => {
     res.sendFile(join(publicPath, "proccy.html"));
 });
 
+app.get("/settings", (req, res) => {
+    res.sendFile(join(publicPath, "settings.html"));
+});
+
 app.get("*", (req, res) => {
     res.status(404);
     res.sendFile(join(publicPath, "404.html"));
