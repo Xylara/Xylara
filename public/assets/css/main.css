@@ -211,3 +211,53 @@ button:hover::before {
     object-fit: contain;
     filter: invert(100%);
 }
+
+/* Add these styles at the end of the file */
+.bottombar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.bottombar-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 1rem;
+}
+
+.bottombar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.bottombar-item:hover {
+    background: rgba(56, 189, 248, 0.1);
+}
+
+.discord-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    background: transparent;
+}
+
+.github-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
