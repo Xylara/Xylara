@@ -212,7 +212,6 @@ button:hover::before {
     filter: invert(100%);
 }
 
-/* Add these styles at the end of the file */
 .bottombar {
     position: fixed;
     bottom: 0;
