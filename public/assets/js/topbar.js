@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const topbarItem = document.querySelector('.topbar-item');
+    const topbarItems = document.querySelectorAll('.topbar-item');
     const currentPath = window.location.pathname;
 
-    const activePaths = ['/', '/settings'];
-    if (activePaths.includes(currentPath)) {
-        topbarItem.classList.add('active');
-    }
+    topbarItems.forEach(item => {
+        const href = item.getAttribute('href');
+        if (href === currentPath) {
+            item.classList.add('active');
+        }
+    });
 });
