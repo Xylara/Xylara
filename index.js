@@ -52,7 +52,6 @@ app.get("/settings", (req, res) => {
 });
 
 app.get("*", (req, res) => {
-    res.status(404);
     res.sendFile(join(publicPath, "404.html"));
 });
 
