@@ -1,16 +1,17 @@
-settings.js
 document.addEventListener('DOMContentLoaded', function() {
     const proxySelector = document.getElementById('proxySelector');
     const transportSelector = document.getElementById('transportSelector');
     const searchEngineSelector = document.getElementById('searchEngineSelector');
+
     
     const proxyValue = localStorage.getItem('proxy') || 'uv';
-    const transportValue = localStorage.getItem('transport') || 'libcurl';
-    const searchEngineValue = localStorage.getItem('searchEngine') || 'duckduckgo';
+    const transportValue = localStorage.getItem('transport') || 'epoxy';
+    const engineValue = localStorage.getItem('searchEngine') || 'duckduckgo';
     
     proxySelector.value = proxyValue;
     transportSelector.value = transportValue;
-    searchEngineSelector.value = searchEngineValue;
+    searchEngineSelector.value = engineValue;
+
 
     proxySelector.addEventListener('change', function() {
         localStorage.setItem('proxy', this.value);
