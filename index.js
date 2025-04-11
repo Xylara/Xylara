@@ -3,6 +3,7 @@ import { createServer } from "node:http";
 import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
 import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
+import { bareModulePath } from "@mercuryworkshop/bare-as-module3"
 import { join } from "node:path";
 import { hostname } from "node:os";
 import { server as wisp } from "@mercuryworkshop/wisp-js/server";
@@ -15,6 +16,7 @@ app.use(express.static(publicPath));
 
 const server = createServer();
 
+app.use("/bare-module/", express.static(bareModulePath));
 app.use("/libcurl/", express.static(libcurlPath));
 app.use("/baremux/", express.static(baremuxPath, {
     extensions: ['js'],
