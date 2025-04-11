@@ -2,13 +2,12 @@
 
 A proxy site with some features
 
-> Im still working on this so dont make a issue saying how to switch to scramjet. Scramjet itself is implimented you just need to switch the proxy via console which I assume most of you dont have.
-
 # Features
 
 - Ultraviolet
 - Scramjet
 - Transport switching
+- Search engine switching
 - More coming soon
 
 # Self-Deployment
