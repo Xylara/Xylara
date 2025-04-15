@@ -36,6 +36,6 @@ jobs:
         with:
           project: "jmate-2011-xylara-38"
           entrypoint: "index.js"
-          root: "/"
+          root: ""
           
           
