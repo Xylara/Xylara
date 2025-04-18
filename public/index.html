@@ -10,6 +10,7 @@
     <script src="/uv/uv.bundle.js"></script>
     <script src="/uv/uv.config.js"></script>
     <script src="./assets/js/topbar.js"></script>
+    <script src="./assets/js/bookmarks.js"></script>
     <link rel="prefetch" href="/scram/scramjet.worker.js" />
     <link rel="prefetch" href="/scram/scramjet.shared.js" />
     <script src="/scram/scramjet.controller.js"></script>
@@ -29,7 +30,7 @@
     </nav>
     <nav class="bottombar">
         <div class="bottombar-container">
-            <a href="https://discord.gg/T4TTpr8d" target="_blank" rel="noopener noreferrer" class="bottombar-item">
+            <a href="https://discord.gg/NXBjMGHWPw" target="_blank" rel="noopener noreferrer" class="bottombar-item">
                 <img src="./assets/svg/discord.svg" alt="Discord" class="discord-icon">
                 <span>Discord</span>
             </a>
@@ -60,6 +61,16 @@
             </div>
         </form>
     </div>
+    <div class="bookmark-container">
+        <a class="bookmark-link">
+            <img src="./assets/svg/bookmarks.svg" alt="Bookmarks" class="bookmark-icon">
+        </a>
+    </div>
+<div id="sidebar" class="sidebar">
+    <h2>Bookmarks</h2>
+    <ul>
+    </ul>
+</div>
     <script>
         var form = document.getElementById("form");
         var input = document.getElementById("input");
