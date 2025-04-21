@@ -1,6 +1,5 @@
 :root {
     --primary-color: #0F172A;
-    --secondary-color: #38BDF8;
     --accent-color: #F8F9FA;
     --neutral-color: #6B7280;
     --gradient: linear-gradient(135deg, #0F172A, #15202B);
@@ -88,7 +87,6 @@ button::before {
     bottom: 0;
     border-radius: var(--border-radius);
     padding: 2px;
-    background: linear-gradient(135deg, #00FFFF, #38BDF8);
     transform: scale(1.05);
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -110,6 +108,7 @@ button:hover::before {
     border: 1px solid rgba(255, 255, 255, 0.1);
     gap: 1rem;
     backdrop-filter: blur(10px);
+    color: var(--secondary-color);
 }
 
 .info-container > div {
@@ -120,6 +119,7 @@ button:hover::before {
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
     text-align: center;
+    color: var(--secondary-color);
 }
 
 .info-container h4 {
@@ -131,13 +131,12 @@ button:hover::before {
 .info-container span {
     font-size: 1rem;
     font-weight: 600;
-    background: linear-gradient(45deg, var(--secondary-color), #00FFFF);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
     text-overflow: ellipsis;
     overflow: hidden;
     display: block;
+    color: #00eeff;
 }
 
 @media (max-width: 768px) {
@@ -271,7 +270,115 @@ button:hover::before {
     background: rgba(255, 255, 255, 0.05);
 }
 
-.bookmark-link:hover {
-    background: var(--secondary-color);
-    color: var(--accent-color);
+.add-bookmark {
+    position: absolute;
+    top: 40px;
+    right: 100px;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.1);
+    color: var(--neutral-color);
+    border: 1px solid rgba(15, 23, 42, 0.2);
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    padding: 0 12px;
+}
+
+.add-bookmark:hover {
+    background: rgba(15, 23, 42, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.add-bookmark:hover::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(
+        45deg,
+        transparent 25%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 75%
+    );
+    animation: shine 2s infinite;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+  
+  .bookmark-form {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .form-container {
+    background: rgba(15, 23, 42, 0.3);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px;
+  }
+  
+  .form-container input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: var(--border-radius);
+    background: rgba(15, 23, 42, 0.05);
+    color: var(--neutral-color);
+  }
+  
+  .form-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+  
+  .save-bookmark, .cancel-form {
+    padding: 0.8rem 1.5rem;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: var(--border-radius);
+    background: rgba(15, 23, 42, 0.05);
+    color: var(--neutral-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .save-bookmark:hover {
+    background: rgba(56, 189, 248, 0.2);
+  }
+  
+  .cancel-form:hover {
+    background: rgba(15, 23, 42, 0.1);
+  }
+
+  
+.bookmark-form.active {
+    display: flex;
+}
+
+.bookmark-icon:hover {
+    background: rgba(56, 189, 248, 0.1);
 }

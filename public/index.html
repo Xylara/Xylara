@@ -68,9 +68,18 @@
     </div>
 <div id="sidebar" class="sidebar">
     <h2>Bookmarks</h2>
-    <ul>
-    </ul>
+        <button class="add-bookmark">+</button>
 </div>
+<form class="bookmark-form">
+    <div class="form-container">
+        <input type="text" id="bookmark-name" placeholder="Bookmark Name">
+        <input type="url" id="bookmark-url" placeholder="Bookmark URL">
+        <div class="form-buttons">
+            <button type="button" class="save-bookmark">Save</button>
+            <button type="button" class="cancel-form">Cancel</button>
+        </div>
+    </div>
+</form>
     <script>
         var form = document.getElementById("form");
         var input = document.getElementById("input");
