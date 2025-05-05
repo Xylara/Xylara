@@ -8,6 +8,48 @@ document.addEventListener('DOMContentLoaded', function() {
     const cancelBtn = document.querySelector('.cancel-form');
     const bookmarkName = document.getElementById('bookmark-name');
     const bookmarkUrl = document.getElementById('bookmark-url');
+
+    function loadBookmarks() {
+        const bookmarks = localStorage.getItem('bookmarks');
+        if (bookmarks) {
+            JSON.parse(bookmarks).forEach(bookmark => {
+                addBookmark(bookmark.name, bookmark.url);
+            });
+        }
+    }
+
+    function saveBookmarks() {
+        const bookmarksArray = Array.from(sidebar.querySelectorAll('.bookmark')).map(bookmark => ({
+            name: bookmark.querySelector('.bookmark-name').textContent,
+            url: bookmark.dataset.url
+        }));
+        localStorage.setItem('bookmarks', JSON.stringify(bookmarksArray));
+    }
+
+    function addBookmark(name, url) {
+        const bookmark = document.createElement('div');
+        bookmark.className = 'bookmark';
+        bookmark.innerHTML = `
+            <span class="bookmark-name">${name}</span>
+            <span class="bookmark-url">${url}</span>
+            <span class="bookmark-remove">×</span>
+        `;
+        bookmark.dataset.url = url;
+
+        bookmark.querySelector('.bookmark-remove').addEventListener('click', function() {
+            bookmark.remove();
+            saveBookmarks();
+        });
+
+        bookmark.addEventListener('click', function(event) { 
+            handleBookmarkClick(event, this.dataset.url);
+        });
+
+        sidebar.appendChild(bookmark);
+        saveBookmarks();
+    }
+
+    loadBookmarks();
     
     function toggleSidebar() {
         sidebar.classList.toggle('sidebar-open');
@@ -43,20 +85,6 @@ document.addEventListener('DOMContentLoaded', function() {
         bookmarkName.value = '';
         bookmarkUrl.value = '';
     });
-    
-    function addBookmark(name, url) {
-        const bookmark = document.createElement('div');
-        bookmark.className = 'bookmark';
-        bookmark.innerHTML = `
-            <span class="bookmark-name">${name}</span>
-            <span class="bookmark-url">${url}</span>
-        `;
-        bookmark.dataset.url = url;
-        bookmark.addEventListener('click', function() { 
-            handleBookmarkClick(event, this.dataset.url);
-        });
-        sidebar.appendChild(bookmark);
-    }
     
     function handleBookmarkClick(event, url) {
         event.preventDefault();

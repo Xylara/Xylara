@@ -414,3 +414,12 @@ button:hover::before {
     background: rgba(56, 189, 248, 0.1);
 }
 
+.bookmark-remove {
+    cursor: pointer;
+    margin-left: 10px;
+    color: #666;
+}
+
+.bookmark-remove:hover {
+    color: #333;
+}
