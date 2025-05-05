@@ -31,20 +31,19 @@ document.addEventListener('DOMContentLoaded', function() {
         bookmark.className = 'bookmark';
         bookmark.innerHTML = `
             <span class="bookmark-name">${name}</span>
-            <span class="bookmark-url">${url}</span>
             <span class="bookmark-remove">×</span>
         `;
         bookmark.dataset.url = url;
-
+    
         bookmark.querySelector('.bookmark-remove').addEventListener('click', function() {
             bookmark.remove();
             saveBookmarks();
         });
-
+    
         bookmark.addEventListener('click', function(event) { 
             handleBookmarkClick(event, this.dataset.url);
         });
-
+    
         sidebar.appendChild(bookmark);
         saveBookmarks();
     }
