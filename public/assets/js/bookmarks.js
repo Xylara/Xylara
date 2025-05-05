@@ -46,14 +46,39 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function addBookmark(name, url) {
         const bookmark = document.createElement('div');
-        bookmark.className = 'bookmark-link';
+        bookmark.className = 'bookmark';
         bookmark.innerHTML = `
-            <span>${name}</span>
-            <a href="${url}" target="_blank" rel="noopener noreferrer">
-                ${url}
-            </a>
+            <span class="bookmark-name">${name}</span>
+            <span class="bookmark-url">${url}</span>
         `;
+        bookmark.dataset.url = url;
+        bookmark.addEventListener('click', function() { 
+            handleBookmarkClick(event, this.dataset.url);
+        });
         sidebar.appendChild(bookmark);
+    }
+    
+    function handleBookmarkClick(event, url) {
+        event.preventDefault();
+        const proxyType = localStorage.getItem("proxy") || "uv";
+        
+        if (proxyType === "sj") {
+            sjEncode(url);
+        } else {
+            uvEncode(url);
+        }
+    }
+    
+    async function uvEncode(url) {
+        const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
+        localStorage.setItem("url", encodedUrl); 
+        window.location.href = "/proccy";
+    }
+    
+    async function sjEncode(url) {
+        const encodedUrl = "/scram/service/" + encodeURIComponent(url);
+        localStorage.setItem("url", encodedUrl); 
+        window.location.href = "/proccy";
     }
     
     document.addEventListener('click', function(e) {

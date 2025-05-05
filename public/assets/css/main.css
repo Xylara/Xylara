@@ -268,6 +268,10 @@ button:hover::before {
     border-radius: 8px;
     transition: all 0.3s ease;
     background: rgba(255, 255, 255, 0.05);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .add-bookmark {
@@ -382,3 +386,31 @@ button:hover::before {
 .bookmark-icon:hover {
     background: rgba(56, 189, 248, 0.1);
 }
+
+.bookmark {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0;
+    border-radius: var(--border-radius);
+    background-color: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bookmark-name {
+    display: block;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--accent-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.bookmark:hover {
+    background: rgba(56, 189, 248, 0.1);
+}
+
