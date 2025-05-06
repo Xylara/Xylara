@@ -25,17 +25,4 @@ document.addEventListener('DOMContentLoaded', function() {
     searchEngineSelector.addEventListener('change', function() {
         localStorage.setItem('searchEngine', this.value);
     });
-
-    adblockSelector.addEventListener('change', function() {
-        const enabled = this.value === 'enabled';
-        localStorage.setItem('adblocker', this.value);
-        
-        fetch('/api/adblocker', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ enabled }),
-        });
-    });
 });
