@@ -2,17 +2,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const proxySelector = document.getElementById('proxySelector');
     const transportSelector = document.getElementById('transportSelector');
     const searchEngineSelector = document.getElementById('searchEngineSelector');
-    const adblockSelector = document.getElementById('adblockSelector');
 
     const proxyValue = localStorage.getItem('proxy') || 'uv';
     const transportValue = localStorage.getItem('transport') || 'epoxy';
     const engineValue = localStorage.getItem('searchEngine') || 'duckduckgo';
-    const adblockValue = localStorage.getItem('adblocker') || 'disabled';
 
     proxySelector.value = proxyValue;
     transportSelector.value = transportValue;
     searchEngineSelector.value = engineValue;
-    adblockSelector.value = adblockValue;
 
     proxySelector.addEventListener('change', function() {
         localStorage.setItem('proxy', this.value);
