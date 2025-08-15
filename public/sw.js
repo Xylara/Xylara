@@ -1,9 +1,11 @@
 importScripts('/uv/uv.bundle.js');
 importScripts('/uv/uv.config.js');
 importScripts('/uv/uv.sw.js');
-importScripts("/scram/scramjet.wasm.js", "/scram/scramjet.shared.js", "/scram/scramjet.worker.js");
+importScripts("/scram/scramjet.all.js");
 
 const uv = new UVServiceWorker();
+
+const { ScramjetServiceWorker } = $scramjetLoadWorker();
 const scramjet = new ScramjetServiceWorker();
 
 let playgroundData;
