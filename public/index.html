@@ -11,8 +11,7 @@
     <script src="/uv/uv.config.js"></script>
     <script src="./assets/js/topbar.js"></script>
     <script src="./assets/js/bookmarks.js"></script>
-    <link rel="prefetch" href="/scram/scramjet.worker.js" />
-    <link rel="prefetch" href="/scram/scramjet.shared.js" />
+    <link rel="prefetch" href="/scram/scramjet.all.js" />
     <script src="/scram/scramjet.controller.js"></script>
     <link rel="stylesheet" href="./assets/css/main.css">
     <link rel="stylesheet" href="./assets/css/topbar.css">
@@ -108,9 +107,7 @@
                 prefix: "/scram/service/",
                 files: {
                     wasm: "/scram/scramjet.wasm.js",
-                    worker: "/scram/scramjet.worker.js",
-                    client: "/scram/scramjet.client.js",
-                    shared: "/scram/scramjet.shared.js",
+                    all: "/scram/scramjet.all.js",
                     sync: "/scram/scramjet.sync.js"
                 },
                 flags: {
