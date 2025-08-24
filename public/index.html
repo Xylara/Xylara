@@ -103,6 +103,7 @@
         }
 
         try {
+            const { ScramjetController } = $scramjetLoadController();
             const scramjet = new ScramjetController({
                 prefix: "/scram/service/",
                 files: {
