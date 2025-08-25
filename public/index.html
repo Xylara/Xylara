@@ -116,11 +116,25 @@
                 }
             });
             window.sj = scramjet;
-            scramjet.init("/sw.js");
+            scramjet.init();
         } catch (error) {
             console.error("Scramjet initialization error:", error);
         }
     }
+
+    if (navigator.serviceWorker) {
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+        if (registrations.length === 0) {
+            try {
+                navigator.serviceWorker.register("sw.js").then(() => {
+                    console.log("Service worker registered.");
+                });
+            } catch (err) {
+                console.error("An error occurred while registering service worker:", err);
+            }
+        }
+    });
+}
 
     init();
 
