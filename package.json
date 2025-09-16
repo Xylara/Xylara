@@ -19,7 +19,6 @@
     "@mercuryworkshop/libcurl-transport": "^1.4.0",
     "@mercuryworkshop/wisp-js": "^0.3.3",
     "@titaniumnetwork-dev/ultraviolet": "^3.2.7",
-    "@mercuryworkshop/scramjet": "https://github.com/MercuryWorkshop/scramjet/releases/download/latest/mercuryworkshop-scramjet-1.0.2-dev.tgz",
     "@tomphttp/bare-server-node": "^2.0.5",
     "express": "^4.21.1",
     "meteorproxy": "1.0.6-patch.1",

@@ -1,4 +1,5 @@
 FROM node:23
 COPY . .
-RUN npm install
-CMD ["npm", "start"]
+RUN npm install -g bun
+RUN bun install
+CMD ["bun", "start"]
