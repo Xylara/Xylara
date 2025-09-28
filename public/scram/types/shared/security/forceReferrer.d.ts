@@ -1,10 +1,4 @@
-/**
- * IDB is used to persist rather than using a `Map`, because SWs are suicidal
- */
-interface ReferrerPolicyData {
-    policy: string;
-    referrer: string;
-}
+import { type ReferrerPolicyData } from "../../types";
 /**
  * Initialize tracking for a new request that might redirect
  *
@@ -53,4 +47,3 @@ export declare function storeReferrerPolicy(url: string, policy: string, referre
  * @returns Referrer policy data if found, or `null`
  */
 export declare function getReferrerPolicy(url: string): Promise<ReferrerPolicyData | null>;
-export {};

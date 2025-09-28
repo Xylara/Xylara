@@ -4,7 +4,17 @@ import { SCRAMJETCLIENT, SCRAMJETFRAME } from "./symbols";
 import * as controller from "./controller/index";
 import * as client from "./client/entry";
 import * as worker from "./worker/index";
-import { ScramjetVersionInfo } from "./entry";
+import { DBSchema } from "idb";
+/**
+ * Version information for the current Scramjet build.
+ * Contains both the semantic version string and the git commit hash for build identification.
+ */
+export interface ScramjetVersionInfo {
+    /** The git commit hash that this build was created from */
+    build: string;
+    /** The semantic version */
+    version: string;
+}
 /**
  * Scramjet Feature Flags, configured at build time
  */
@@ -86,4 +96,40 @@ declare global {
          */
         [SCRAMJETFRAME]: ScramjetFrame;
     }
+}
+export type SiteDirective = "same-origin" | "same-site" | "cross-site" | "none";
+export interface RedirectTracker {
+    originalReferrer: string;
+    mostRestrictiveSite: SiteDirective;
+    referrerPolicy: string;
+    chainStarted: number;
+}
+export interface ReferrerPolicyData {
+    policy: string;
+    referrer: string;
+}
+export interface ScramjetDB extends DBSchema {
+    config: {
+        key: string;
+        value: ScramjetConfig;
+    };
+    cookies: {
+        key: string;
+        value: any;
+    };
+    redirectTrackers: {
+        key: string;
+        value: RedirectTracker;
+    };
+    referrerPolicies: {
+        key: string;
+        value: ReferrerPolicyData;
+    };
+    publicSuffixList: {
+        key: string;
+        value: {
+            data: string[];
+            expiry: number;
+        };
+    };
 }

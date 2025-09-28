@@ -1,11 +1,4 @@
-/**
- * @fileoverview Scramjet Entry Point. This module contain global constants and factory functions to load the APIs in the bundle.
- *
- * @categoryDescription Window Context
- * APIs for the main window context, which includes creating Scramjet Frames and the Controller for managing the Scramjet proxy behavior in the SW.
- * @categoryDescription Service Worker Context
- * APIs designed for the service worker context, where the core logic resides. These are the essentials and include the the `ScramjetServiceWorker`.
- */
+import type { ScramjetVersionInfo } from "./types";
 /**
  * @category Window Context
  */
@@ -66,6 +59,14 @@ export type { ScramjetClient } from "./client";
  * @category Service Worker Context
  */
 export type { ScramjetServiceWorker } from "./worker";
+/**
+ * @fileoverview Scramjet Entry Point. This module contain global constants and factory functions to load the APIs in the bundle.
+ *
+ * @categoryDescription Window Context
+ * APIs for the main window context, which includes creating Scramjet Frames and the Controller for managing the Scramjet proxy behavior in the SW.
+ * @categoryDescription Service Worker Context
+ * APIs designed for the service worker context, where the core logic resides. These are the essentials and include the the `ScramjetServiceWorker`.
+ */
 /**
  * Factory function that creates the `ScramjetController` class.
  *
@@ -151,18 +152,6 @@ export declare function $scramjetLoadClient(): any;
  * @category Service Worker Context
  */
 export declare function $scramjetLoadWorker(): any;
-/**
- * Version information for the current Scramjet build.
- * Contains both the semantic version string and the git commit hash for build identification.
- *
- * @category Window Context
- */
-export interface ScramjetVersionInfo {
-    /** The git commit hash that this build was created from */
-    build: string;
-    /** The semantic version */
-    version: string;
-}
 /**
  * Version information for the current Scramjet build.
  *

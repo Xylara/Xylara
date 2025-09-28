@@ -1,5 +1,6 @@
-import { ScramjetInitConfig } from "../types";
+import { ScramjetInitConfig, ScramjetDB } from "../types";
 import { ScramjetFrame } from "./frame";
+import { IDBPDatabase } from "idb";
 import { ScramjetGlobalEvents } from "../client/events";
 export declare class ScramjetController extends EventTarget {
     #private;
@@ -9,7 +10,7 @@ export declare class ScramjetController extends EventTarget {
     createFrame(frame?: HTMLIFrameElement): ScramjetFrame;
     encodeUrl(url: string | URL): string;
     decodeUrl(url: string | URL): string;
-    openIDB(): Promise<IDBDatabase>;
+    openIDB(): Promise<IDBPDatabase<ScramjetDB>>;
     modifyConfig(newconfig: Partial<ScramjetInitConfig>): Promise<void>;
     addEventListener<K extends keyof ScramjetGlobalEvents>(type: K, listener: (event: ScramjetGlobalEvents[K]) => void, options?: boolean | AddEventListenerOptions): void;
 }
