@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const bookmarkContainer = document.querySelector('.bookmark-container');
-    const mainContent = document.querySelector('.main-content');
     const addBookmarkBtn = document.querySelector('.add-bookmark');
     const bookmarkForm = document.querySelector('.bookmark-form');
     const saveBtn = document.querySelector('.save-bookmark');
     const cancelBtn = document.querySelector('.cancel-form');
     const bookmarkName = document.getElementById('bookmark-name');
     const bookmarkUrl = document.getElementById('bookmark-url');
+    const bookmarkList = document.querySelector('.bookmark-list');
 
     function loadBookmarks() {
         const bookmarks = localStorage.getItem('bookmarks');
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function saveBookmarks() {
-        const bookmarksArray = Array.from(sidebar.querySelectorAll('.bookmark')).map(bookmark => ({
+        const bookmarksArray = Array.from(bookmarkList.querySelectorAll('.bookmark')).map(bookmark => ({
             name: bookmark.querySelector('.bookmark-name').textContent,
             url: bookmark.dataset.url
         }));
@@ -27,33 +27,35 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function addBookmark(name, url) {
+        const listItem = document.createElement('li');
         const bookmark = document.createElement('div');
         bookmark.className = 'bookmark';
         bookmark.innerHTML = `
             <span class="bookmark-name">${name}</span>
-            <span class="bookmark-remove">×</span>
+            <button class="bookmark-remove">×</button>
         `;
         bookmark.dataset.url = url;
     
-        bookmark.querySelector('.bookmark-remove').addEventListener('click', function() {
-            bookmark.remove();
+        bookmark.querySelector('.bookmark-remove').addEventListener('click', function(e) {
+            e.stopPropagation();
+            listItem.remove();
             saveBookmarks();
         });
     
-        bookmark.addEventListener('click', function(event) { 
+        bookmark.addEventListener('click', function(event) {
             handleBookmarkClick(event, this.dataset.url);
         });
-    
-        sidebar.appendChild(bookmark);
+        
+        listItem.appendChild(bookmark);
+        bookmarkList.appendChild(listItem);
         saveBookmarks();
     }
 
     loadBookmarks();
     
     function toggleSidebar() {
-        sidebar.classList.toggle('sidebar-open');
+        sidebar.classList.toggle('open');
         bookmarkContainer.classList.toggle('sidebar-open');
-        mainContent.classList.toggle('sidebar-open');
         document.body.classList.toggle('sidebar-open');
     }
     
