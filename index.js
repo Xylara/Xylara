@@ -60,6 +60,10 @@ app.get("/settings/styles", (req, res) => {
     res.render("settings/styles");
 });
 
+app.get("/settings/misc", (req, res) => {
+    res.render("settings/misc");
+});
+
 server.on("request", (req, res) => {
     res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
     res.setHeader("Cross-Origin-Embedder-Policy", "anonymous");

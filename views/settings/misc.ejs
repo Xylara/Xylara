@@ -1,0 +1,87 @@
+<%- include('../parts/topbar') %>
+<%- include('../parts/sidebar') %>
+<title>Xylara</title>
+
+<div class="settings-container">
+    <div class="setting-item">
+        <label for="background-image">Honestly idk what to even add here</label>
+    </div>
+</div>
+ 
+<style>
+    body {
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+        color: white;
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        margin-left: 200px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+    }
+
+    .settings-container {
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 20px;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 600px;
+        margin-top: 65px;
+    }
+
+    .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .setting-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .setting-item label {
+        font-size: 1.1em;
+        margin-right: 10px;
+    }
+
+    .setting-item select {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 1em;
+        cursor: pointer;
+    }
+
+    .setting-item select option {
+        background-color: #333;
+        color: white;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const defaultBg = '/assets/backgrounds/foggy-forest.png';
+        let bg = localStorage.getItem('bg');
+        if (!bg) {
+            bg = defaultBg;
+            localStorage.setItem('bg', bg);
+        }
+        document.body.style.backgroundImage = `url('${bg}')`;
+
+        const backgroundImageSelect = document.getElementById('background-image');
+        backgroundImageSelect.value = bg;
+        backgroundImageSelect.addEventListener('change', (event) => {
+            const selectedBg = event.target.value;
+            localStorage.setItem('bg', selectedBg);
+            document.body.style.backgroundImage = `url('${selectedBg}')`;
+        });
+    });
+</script>
