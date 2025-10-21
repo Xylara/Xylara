@@ -1,6 +1,54 @@
 <%- include('../parts/topbar') %>
 <%- include('../parts/sidebar') %>
 <title>Xylara</title>
+
+<div class="settings-container">
+    <div class="setting-item">
+        <label for="proxy-type">Type</label>
+        <select id="proxy-type">
+            <option value="ultraviolet">Ultraviolet</option>
+            <option value="scramjet">Scramjet</option>
+        </select>
+    </div>
+</div>
+
+<div class="settings-container">
+    <div class="setting-item">
+        <label for="search-engine">Search Engine</label>
+        <select id="search-engine">
+            <option value="https://www.google.com/search?q=">Google</option>
+            <option value="https://www.bing.com/search?q=">Bing</option>
+            <option value="https://search.brave.com/search?q=">Brave</option>
+            <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+            <option value="https://www.ecosia.org/search?q=">Ecosia</option>
+        </select>
+    </div>
+</div>
+
+<div class="settings-container">
+    <div class="setting-item">
+        <label for="transport-type">Transport</label>
+        <select id="transport-type">
+            <option value="libcurl">Libcurl</option>
+            <option value="epoxy">Epoxy</option>
+        </select>
+    </div>
+</div>
+
+<div class="settings-container">
+    <div class="setting-item">
+        <label for="wisp-server-type">Wisp Server</label>
+        <select id="wisp-server-type">
+            <option value="default">Default</option>
+            <option value="custom">Custom</option>
+        </select>
+    </div>
+    <div class="setting-item" id="custom-wisp-server-container" style="display: none;">
+        <label for="custom-wisp-server-input">Custom Wisp URL</label>
+        <input type="text" id="custom-wisp-server-input" placeholder="wss://your-custom-wisp-server.com/wisp/">
+    </div>
+</div>
+
 <style>
     body {
         background-image: url('/assets/bg.png');
@@ -15,7 +63,132 @@
         margin-left: 200px;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         min-height: 100vh;
     }
+
+    .settings-container {
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 20px;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 600px;
+        margin-top: 65px;
+    }
+
+    .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .setting-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .setting-item label {
+        font-size: 1.1em;
+        margin-right: 10px;
+    }
+
+    .setting-item select {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 1em;
+        cursor: pointer;
+    }
+
+    .setting-item select option {
+        background-color: #333;
+        color: white;
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const proxyTypeSelect = document.getElementById('proxy-type');
+
+        if (!localStorage.getItem('proxy')) {
+            localStorage.setItem('proxy', 'ultraviolet');
+        }
+
+        proxyTypeSelect.value = localStorage.getItem('proxy');
+
+        proxyTypeSelect.addEventListener('change', (event) => {
+            localStorage.setItem('proxy', event.target.value);
+        });
+
+        const searchEngineSelect = document.getElementById('search-engine');
+
+        if (!localStorage.getItem('search')) {
+            localStorage.setItem('search', 'https://www.google.com/search?q=');
+        }
+
+        searchEngineSelect.value = localStorage.getItem('search');
+
+        searchEngineSelect.addEventListener('change', (event) => {
+            localStorage.setItem('search', event.target.value);
+        });
+
+        const transportTypeSelect = document.getElementById('transport-type');
+
+        if (!localStorage.getItem('transport')) {
+            localStorage.setItem('transport', 'libcurl');
+        }
+
+        transportTypeSelect.value = localStorage.getItem('transport');
+
+        transportTypeSelect.addEventListener('change', (event) => {
+            localStorage.setItem('transport', event.target.value);
+        });
+
+        const wispServerTypeSelect = document.getElementById('wisp-server-type');
+        const customWispServerContainer = document.getElementById('custom-wisp-server-container');
+        const customWispServerInput = document.getElementById('custom-wisp-server-input');
+
+        const defaultWispUrl = `wss://${window.location.host}/wisp/`;
+
+        if (!localStorage.getItem('wisp')) {
+            localStorage.setItem('wisp', defaultWispUrl);
+        }
+
+        const currentWispUrl = localStorage.getItem('wisp');
+        if (currentWispUrl === defaultWispUrl) {
+            wispServerTypeSelect.value = 'default';
+            customWispServerInput.value = '';
+        } else {
+            wispServerTypeSelect.value = 'custom';
+            customWispServerInput.value = currentWispUrl;
+        }
+
+        const updateWispServerVisibility = () => {
+            if (wispServerTypeSelect.value === 'custom') {
+                customWispServerContainer.style.display = 'flex';
+            } else {
+                customWispServerContainer.style.display = 'none';
+            }
+        };
+
+        updateWispServerVisibility();
+
+        wispServerTypeSelect.addEventListener('change', (event) => {
+            const selectedType = event.target.value;
+            if (selectedType === 'default') {
+                localStorage.setItem('wisp', defaultWispUrl);
+            } else {
+                localStorage.setItem('wisp', customWispServerInput.value);
+            }
+            updateWispServerVisibility();
+        });
+
+        customWispServerInput.addEventListener('input', (event) => {
+            if (wispServerTypeSelect.value === 'custom') {
+                localStorage.setItem('wisp', event.target.value);
+            }
+        });
+    });
+</script>
