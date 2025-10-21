@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xylara</title>
+    <link rel="prefetch" href="/scram/scramjet.all.js" />
+    <script src="/scram/scramjet.all.js"></script>
+    <script src="/baremux"></script>
+    <script src="/epoxy"></script>
+    <link rel="icon" type="image/png" src="/assets/favicon.png">
+    <script src="/uv/uv.bundle.js"></script>
+    <script src="/uv/uv.config.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('/assets/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .search-input {
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            width: 400px;
+            font-size: 16px;
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+        .search-input::placeholder {
+            color: #666;
+        }
+        .search-button {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 15px;
+            margin-left: 4px;
+            cursor: pointer;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        .search-button:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <%- include('parts/topbar.ejs') %>
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Search the web freely...">
+        <button class="search-button">➜</button>
+    </div>
+</body>
+</html>

@@ -14,6 +14,9 @@ const app = express();
 const publicPath = join(__dirname, "public");
 app.use(express.static(publicPath));
 
+app.set('view engine', 'ejs');
+app.set('views', join(__dirname, 'views'));
+
 wisp.options.dns_method = "resolve";
 wisp.options.dns_servers = ["94.140.14.14", "94.140.15.15", "1.1.1.3", "1.0.0.3"];
 wisp.options.dns_result_order = "ipv4first";
@@ -46,15 +49,11 @@ app.get("/libcurl/index.js", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-    res.sendFile(join(publicPath, "index.html"));
-});
-
-app.get("/proccy", (req, res) => {
-    res.sendFile(join(publicPath, "proccy.html"));
+    res.render("index");
 });
 
 app.get("/settings", (req, res) => {
-    res.sendFile(join(publicPath, "settings.html"));
+    res.render("settings/index");
 });
 
 server.on("request", (req, res) => {
@@ -67,9 +66,9 @@ server.on("upgrade", (req, socket, head) => {
     wisp.routeRequest(req, socket, head);
 });
 
-let port = parseInt(process.env.PORT || "3001");
+let port = parseInt(process.env.PORT || "3000");
 
-if (isNaN(port)) port = 3001;
+if (isNaN(port)) port = 3000;
 
 server.on("listening", () => {
     const address = server.address();
