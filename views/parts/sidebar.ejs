@@ -1,0 +1,94 @@
+<div class="sidebar">
+    <h3 style="color: white; margin-bottom: 10px;">Settings</h3>
+    <div class="sidebar-links-container">
+        <a href="/settings/" id="settings-main-link" class="sidebar-item">Main</a>
+        <a href="/settings/styles" id="settings-styles-link" class="sidebar-item">Style</a>
+        <a href="/settings/misc" id="settings-misc-link" class="sidebar-item">Misc</a>
+    </div>
+    <div class="social-buttons">
+        <a href="https://discord.gg/NXBjMGHWPw" target="_blank" class="social-button">
+            <img src="/assets/svg/discord.svg" alt="Discord" class="sidebar-icon discord-icon">
+        </a>
+        <a href="https://github.com/Xylara/Xylara" target="_blank" class="social-button">
+            <img src="/assets/svg/github.svg" alt="GitHub" class="sidebar-icon github-icon">
+        </a>
+    </div>
+</div>
+<style>
+    .social-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: auto;
+    }
+
+    .social-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: background-color 0.3s ease;
+    }
+
+    .social-button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .sidebar-icon {
+        width: 25px;
+        height: 25px;
+        fill: white;
+    }
+</style>
+
+<style>
+    .sidebar {
+        width: 200px;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 8px 15px;
+        box-sizing: border-box;
+        position: fixed;
+        height: calc(100% - 8px);
+        left: 4px;
+        top: 4px;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 20px;
+    }
+
+    .sidebar-item {
+        display: block;
+        color: white;
+        padding: 5px 10px;
+        text-decoration: none;
+        border-radius: 15px;
+        transition: background-color 0.3s ease;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-item.active {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const currentPath = window.location.pathname;
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+
+        sidebarItems.forEach(item => {
+            if (item.getAttribute('href') === currentPath) {
+                item.classList.add('active');
+            }
+        });
+    });
+</script>
