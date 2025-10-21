@@ -15,7 +15,6 @@
         body {
             margin: 0;
             padding: 0;
-            background-image: url('/assets/bg.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -65,6 +64,17 @@
             background-color: rgba(0, 0, 0, 0.9);
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const defaultBg = '/assets/backgrounds/foggy-forest.png';
+            let bg = localStorage.getItem('bg');
+            if (!bg) {
+                bg = defaultBg;
+                localStorage.setItem('bg', bg);
+            }
+            document.body.style.backgroundImage = `url('${bg}')`;
+        });
+    </script>
 </head>
 <body>
     <%- include('parts/topbar.ejs') %>

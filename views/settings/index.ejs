@@ -51,7 +51,6 @@
 
 <style>
     body {
-        background-image: url('/assets/bg.png');
         background-size: cover;
         background-attachment: fixed;
         background-position: center;
@@ -110,6 +109,14 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const defaultBg = '/assets/backgrounds/foggy-forest.png';
+        let bg = localStorage.getItem('bg');
+        if (!bg) {
+            bg = defaultBg;
+            localStorage.setItem('bg', bg);
+        }
+        document.body.style.backgroundImage = `url('${bg}')`;
+        
         const proxyTypeSelect = document.getElementById('proxy-type');
 
         if (!localStorage.getItem('proxy')) {
