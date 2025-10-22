@@ -56,7 +56,6 @@
         background-attachment: fixed;
         background-position: center;
         color: white;
-        font-family: 'Arial', sans-serif;
         margin: 0;
         padding: 0;
         display: flex;
@@ -198,5 +197,10 @@
                 localStorage.setItem('wisp', event.target.value);
             }
         });
+
+        const savedFont = localStorage.getItem('font');
+        if (savedFont) {
+            document.body.style.fontFamily = savedFont;
+        }
     });
 </script>

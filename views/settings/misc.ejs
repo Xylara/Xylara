@@ -15,7 +15,6 @@
         background-attachment: fixed;
         background-position: center;
         color: white;
-        font-family: 'Arial', sans-serif;
         margin: 0;
         padding: 0;
         display: flex;
@@ -67,8 +66,15 @@
     }
 </style>
 
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const savedFont = localStorage.getItem('font');
+        if (savedFont) {
+            document.body.style.fontFamily = savedFont;
+        }
+
         const defaultBg = '/assets/backgrounds/foggy-forest.png';
         let bg = localStorage.getItem('bg');
         if (!bg) {

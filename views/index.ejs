@@ -24,7 +24,6 @@
             justify-content: center;
             align-items: center;
             color: white;
-            font-family: Arial, sans-serif;
         }
         h1 {
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
@@ -75,6 +74,11 @@
             }
             document.body.style.backgroundImage = `url('${bg}')`;
         });
+
+        const savedFont = localStorage.getItem('font');
+        if (savedFont) {
+            document.body.style.fontFamily = savedFont;
+        }
     </script>
     <script>
         async function uvEncode(url) {

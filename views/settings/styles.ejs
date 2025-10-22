@@ -14,6 +14,20 @@
         </select>
     </div>
 </div>
+
+<div class="settings-container">
+    <div class="setting-item">
+        <label for="font-family">Font Family</label>
+        <select id="font-family">
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="Verdana, sans-serif">Verdana</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="Times New Roman, serif">Times New Roman</option>
+            <option value="Courier New, monospace">Courier New</option>
+            <option value="Lucida Console, monospace">Lucida Console</option>
+        </select>
+    </div>
+</div>
  
 <style>
     body {
@@ -21,7 +35,6 @@
         background-attachment: fixed;
         background-position: center;
         color: white;
-        font-family: 'Arial', sans-serif;
         margin: 0;
         padding: 0;
         display: flex;
@@ -89,6 +102,22 @@
             const selectedBg = event.target.value;
             localStorage.setItem('bg', selectedBg);
             document.body.style.backgroundImage = `url('${selectedBg}')`;
+        });
+
+        const defaultFont = 'Arial, sans-serif';
+        let font = localStorage.getItem('font');
+        if (!font) {
+            font = defaultFont;
+            localStorage.setItem('font', font);
+        }
+        document.body.style.fontFamily = font;
+
+        const fontFamilySelect = document.getElementById('font-family');
+        fontFamilySelect.value = font;
+        fontFamilySelect.addEventListener('change', (event) => {
+            const selectedFont = event.target.value;
+            localStorage.setItem('font', selectedFont);
+            document.body.style.fontFamily = selectedFont;
         });
     });
 </script>
