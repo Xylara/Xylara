@@ -64,6 +64,46 @@
             background-color: rgba(0, 0, 0, 0.9);
         }
     </style>
+    <style>
+        .app-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .app-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.7);
+            margin: 0 10px;
+            cursor: pointer;
+            outline: none;
+            border: none;
+            color: white;
+            text-decoration: none;
+        }
+
+        .app-button:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .app-button img {
+            max-width: 60%;
+            max-height: 60%;
+        }
+
+        #add-app-button {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        #add-app-button:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+    </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const defaultBg = '/assets/backgrounds/foggy-forest.png';
@@ -204,13 +244,198 @@
 
             init();
         });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.querySelector('.search-input');
+            const searchButton = document.querySelector('.search-button');
+            const appButtonsDiv = document.querySelector('.app-buttons');
+            const addAppButton = document.getElementById('add-app-button');
+
+            const encodeURL = async (url) => {
+                let proxyType = localStorage.getItem('proxy');
+                if (!proxyType) {
+                    proxyType = 'ultraviolet';
+                    localStorage.setItem('proxy', proxyType);
+                }
+
+                if (proxyType === 'ultraviolet') {
+                    await uvEncode(url);
+                } else if (proxyType === 'scramjet') {
+                    await sjEncode(url);
+                }
+            };
+
+            const createAppButton = (appName, appUrl) => {
+                const appButton = document.createElement('a');
+                appButton.href = '#';
+                appButton.classList.add('app-button');
+                appButton.textContent = appName;
+
+                appButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    encodeURL(appUrl);
+                });
+
+                appButton.addEventListener('contextmenu', (event) => {
+                    event.preventDefault();
+                    const appName = appButton.textContent;
+                    const appIndex = apps.findIndex(app => app.name === appName);
+                    if (appIndex > -1) {
+                        apps.splice(appIndex, 1);
+                        localStorage.setItem('apps', JSON.stringify(apps));
+                        appButton.remove();
+                    }
+                });
+                return appButton;
+            };
+
+            let apps = JSON.parse(localStorage.getItem('apps') || '[]');
+            apps.forEach(app => {
+                const appButton = createAppButton(app.name, app.url);
+                appButtonsDiv.insertBefore(appButton, addAppButton);
+            });
+
+            addAppButton.addEventListener('click', () => {
+
+            });
+
+            const addAppModal = document.getElementById('add-app-modal');
+            const addAppSubmit = document.getElementById('add-app-submit');
+            const addAppCancel = document.getElementById('add-app-cancel');
+            const appNameInput = document.getElementById('app-name');
+            const appUrlInput = document.getElementById('app-url');
+
+            addAppButton.addEventListener('click', () => {
+                addAppModal.style.display = 'flex';
+            });
+
+            addAppCancel.addEventListener('click', () => {
+                addAppModal.style.display = 'none';
+            });
+
+            addAppSubmit.addEventListener('click', () => {
+                const appName = appNameInput.value;
+                let appUrl = appUrlInput.value;
+
+                if (appUrl && !appUrl.startsWith('http://') && !appUrl.startsWith('https://')) {
+                    appUrl = 'https://' + appUrl;
+                }
+
+                if (appName && appUrl) {
+                    apps.push({ name: appName, url: appUrl });
+                    localStorage.setItem('apps', JSON.stringify(apps));
+
+                    const appButton = createAppButton(appName, appUrl);
+                    appButtonsDiv.insertBefore(appButton, addAppButton);
+
+                    addAppModal.style.display = 'none';
+                    appNameInput.value = '';
+                    appUrlInput.value = '';
+                }
+            });
+
+            const handleSearch = async () => {
+                const query = searchInput.value.trim();
+                if (!query) return;
+
+                let url;
+                let isLikelySearch = false;
+
+                try {
+                    if (query.startsWith('http://') || query.startsWith('https://')) {
+                        url = new URL(query);
+                    } else {
+                        url = new URL('https://' + query);
+                    }
+
+                    if (!url.hostname || !url.hostname.includes('.')) {
+                        isLikelySearch = true;
+                    }
+
+                } catch (e) {
+                    isLikelySearch = true;
+                }
+
+                if (isLikelySearch) {
+                    url = new URL(localStorage.getItem('search') + query);
+                }
+
+                encodeURL(url.toString());
+            };
+
+            searchButton.addEventListener('click', handleSearch);
+            searchInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    handleSearch();
+                }
+            });
+
+            init();
+        });
     </script>
 </head>
 <body>
     <%- include('parts/topbar.ejs') %>
-    <div class="search-container">
-        <input type="text" class="search-input" placeholder="Search the web freely...">
-        <button class="search-button">➜</button>
+    <div class="container">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search the web freely...">
+            <button class="search-button">➜</button>
+        </div>
+        <div class="app-buttons">
+            <a href="#" class="app-button" onclick="event.preventDefault(); (async () => {
+                const searchInput = document.querySelector('.search-input');
+                searchInput.value = 'https://discord.com';
+                const searchButton = document.querySelector('.search-button');
+                searchButton.click();
+            })();">
+                <img src="/assets/svg/discord.svg" alt="Discord">
+            </a>
+            <a href="#" class="app-button" onclick="event.preventDefault(); (async () => {
+                const searchInput = document.querySelector('.search-input');
+                searchInput.value = 'https://play.geforcenow.com';
+                const searchButton = document.querySelector('.search-button');
+                searchButton.click();
+            })();">
+                <img src="/assets/svg/geforcenow.svg" alt="Geforcenow">
+            </a>
+            <a href="#" class="app-button" onclick="event.preventDefault(); (async () => {
+                const searchInput = document.querySelector('.search-input');
+                searchInput.value = 'https://youtube.com';
+                const searchButton = document.querySelector('.search-button');
+                searchButton.click();
+            })();">
+                <img src="/assets/svg/youtube.svg" alt="Youtube">
+            </a>
+            <a href="#" class="app-button" onclick="event.preventDefault(); (async () => {
+                const searchInput = document.querySelector('.search-input');
+                searchInput.value = 'https://spotify.com';
+                const searchButton = document.querySelector('.search-button');
+                searchButton.click();
+            })();">
+                <img src="/assets/svg/spotify.svg" alt="Spotify">
+            </a>
+            <a href="#" class="app-button" onclick="event.preventDefault(); (async () => {
+                const searchInput = document.querySelector('.search-input');
+                searchInput.value = 'https://x.com';
+                const searchButton = document.querySelector('.search-button');
+                searchButton.click();
+            })();">
+                <img src="/assets/svg/x.svg" alt="Twitter/X">
+            </a>
+            <a href="#" class="app-button" id="add-app-button">
+                <img src="/assets/svg/plus.svg" alt="Add App">
+            </a>
+        </div>
+        <div id="add-app-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; backdrop-filter: blur(5px); color: white; font-family: var(--font-family);">
+            <div style="background-color: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 10px; text-align: center;">
+                <h2 style="margin-bottom: 4px;">Add New App</h2>
+                <label for="app-name">App Name:</label><br>
+                <input type="text" id="app-name" name="app-name" style="border: none; border-radius: 25px; padding: 10px 20px; width: 200px; font-size: 16px; outline: none; background-color: rgba(255, 255, 255, 0.1); color: white;"><br><br>
+                <label for="app-url">App URL:</label><br>
+                <input type="text" id="app-url" name="app-url" style="border: none; border-radius: 25px; padding: 10px 20px; width: 200px; font-size: 16px; outline: none; background-color: rgba(255, 255, 255, 0.1); color: white;"><br><br>
+                <button id="add-app-submit" style="background-color: rgba(0, 0, 0, 0.7); border: none; border-radius: 25px; padding: 10px 15px; cursor: pointer; outline: none; color: white; font-size: 16px;">Add</button>
+                <button id="add-app-cancel" style="background-color: rgba(0, 0, 0, 0.7); border: none; border-radius: 25px; padding: 10px 15px; cursor: pointer; outline: none; color: white; font-size: 16px;">Cancel</button>
+            </div>
+        </div>
     </div>
-</body>
 </html>
