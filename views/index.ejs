@@ -163,7 +163,12 @@
                     url = new URL(localStorage.getItem('search') + query);
                 }
 
-                const proxyType = localStorage.getItem('proxy');
+                let proxyType = localStorage.getItem('proxy');
+                if (!proxyType) {
+                    proxyType = 'ultraviolet';
+                    localStorage.setItem('proxy', proxyType);
+                }
+
                 if (proxyType === 'ultraviolet') {
                     await uvEncode(url.toString());
                 } else if (proxyType === 'scramjet') {
