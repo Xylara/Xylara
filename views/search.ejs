@@ -37,14 +37,7 @@
         async function init() {
             try {
                 const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
-                let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
-                
-                if (localStorage.getItem("wisp-server-type") === "custom") {
-                    const customWisp = localStorage.getItem("wisp");
-                    if (customWisp) {
-                        wispUrl = customWisp;
-                    }
-                }
+                const wispUrl = localStorage.getItem("wisp");
 
                 if (localStorage.getItem("transport") == "epoxy") {
                     if (await connection.getTransport() !== "/epoxy/index.mjs") {
