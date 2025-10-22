@@ -157,9 +157,24 @@
                 if (!query) return;
 
                 let url;
+                let isLikelySearch = false;
+
                 try {
-                    url = new URL(query);
+                    if (query.startsWith('http://') || query.startsWith('https://')) {
+                        url = new URL(query);
+                    } else {
+                        url = new URL('https://' + query);
+                    }
+
+                    if (!url.hostname || !url.hostname.includes('.')) {
+                        isLikelySearch = true;
+                    }
+
                 } catch (e) {
+                    isLikelySearch = true;
+                }
+
+                if (isLikelySearch) {
                     url = new URL(localStorage.getItem('search') + query);
                 }
 
