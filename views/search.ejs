@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="/baremux"></script>
+    <script src="/epoxy"></script>
+    <script src="/uv/uv.bundle.js"></script>
+    <script src="/uv/uv.config.js"></script>
+    <link rel="prefetch" href="/scram/scramjet.all.js" />
+    <script src="/scram/scramjet.all.js"></script>
+    <title>Xylara</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100vw;
+            height: 100vh;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="proxyFrame" src=""></iframe>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const encodedUrl = localStorage.getItem("url");
+            if (encodedUrl) {
+                document.getElementById("proxyFrame").src = encodedUrl;
+            }
+        });
+    
+        async function init() {
+            try {
+                const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+                let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+                
+                if (localStorage.getItem("wisp-server-type") === "custom") {
+                    const customWisp = localStorage.getItem("wisp");
+                    if (customWisp) {
+                        wispUrl = customWisp;
+                    }
+                }
+
+                if (localStorage.getItem("transport") == "epoxy") {
+                    if (await connection.getTransport() !== "/epoxy/index.mjs") {
+                        await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+                        console.log("Using websocket transport. Wisp URL is: " + wispUrl);
+                    }
+                } else {
+                    if (await connection.getTransport() !== "/libcurl/index.mjs") {
+                        await connection.setTransport("/libcurl/index.mjs", [{ wisp: wispUrl }]);
+                        console.log("Using websocket transport. Wisp URL is: " + wispUrl);
+                    }
+                }
+            } catch (err) {
+                console.error("An error occurred while setting up baremux:", err);
+            }
+        }
+        
+        init().then(() => {
+        });
+    </script>
+</body>
+</html>

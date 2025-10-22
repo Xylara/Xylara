@@ -75,6 +75,111 @@
             document.body.style.backgroundImage = `url('${bg}')`;
         });
     </script>
+    <script>
+        async function uvEncode(url) {
+            const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
+            localStorage.setItem("url", encodedUrl);
+            window.location.href = "/search";
+        }
+
+        async function sjEncode(url) {
+            const encodedUrl = "/scram/service/" + encodeURIComponent(url);
+            localStorage.setItem("url", encodedUrl);
+            window.location.href = "/search";
+        }
+
+        async function init() {
+            try {
+                const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+                let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+                
+                if (localStorage.getItem("wisp-server-type") === "custom") {
+                    const customWisp = localStorage.getItem("wisp");
+                    if (customWisp) {
+                        wispUrl = customWisp;
+                    }
+                }
+
+                if (localStorage.getItem("transport") == "epoxy") {
+                    if (await connection.getTransport() !== "/epoxy/index.mjs") {
+                        await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+                    }
+                } else {
+                    if (await connection.getTransport() !== "/libcurl/index.mjs") {
+                        await connection.setTransport("/libcurl/index.mjs", [{ wisp: wispUrl }]);
+                    }
+                }
+            } catch (err) {
+                console.error("BareMux initialization error:", err);
+            }
+
+            try {
+                const { ScramjetController } = $scramjetLoadController();
+                const scramjet = new ScramjetController({
+                    prefix: "/scram/service/",
+                    files: {
+                        wasm: "/scram/scramjet.wasm.wasm",
+                        all: "/scram/scramjet.all.js",
+                        sync: "/scram/scramjet.sync.js"
+                    },
+                    flags: {
+                        syncxhr: true
+                    }
+                });
+                window.sj = scramjet;
+                scramjet.init();
+            } catch (error) {
+                console.error("Scramjet initialization error:", error);
+            }
+        }
+
+        if (navigator.serviceWorker) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                if (registrations.length === 0) {
+                    try {
+                        navigator.serviceWorker.register("sw.js").then(() => {
+                            console.log("Service worker registered.");
+                        });
+                    } catch (err) {
+                        console.error("An error occurred while registering service worker:", err);
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.querySelector('.search-input');
+            const searchButton = document.querySelector('.search-button');
+
+            const handleSearch = async () => {
+                const query = searchInput.value.trim();
+                if (!query) return;
+
+                let url;
+                try {
+                    url = new URL(query);
+                } catch (e) {
+                    url = new URL(localStorage.getItem('search') + query);
+                }
+
+                const proxyType = localStorage.getItem('proxy');
+                if (proxyType === 'ultraviolet') {
+                    await uvEncode(url.toString());
+                } else if (proxyType === 'scramjet') {
+                    await sjEncode(url.toString());
+                }
+            };
+
+            searchButton.addEventListener('click', handleSearch);
+            searchInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    handleSearch();
+                }
+            });
+
+            init();
+        });
+    </script>
 </head>
 <body>
     <%- include('parts/topbar.ejs') %>
