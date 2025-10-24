@@ -25,12 +25,12 @@
     </style>
 </head>
 <body>
-    <iframe id="proxyFrame" src=""></iframe>
+    <iframe id="Frame" src=""></iframe>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const encodedUrl = localStorage.getItem("url");
             if (encodedUrl) {
-                document.getElementById("proxyFrame").src = encodedUrl;
+                document.getElementById("Frame").src = encodedUrl;
             }
         });
     

@@ -5,8 +5,8 @@
 
 <div class="settings-container">
     <div class="setting-item">
-        <label for="proxy-type">Type</label>
-        <select id="proxy-type">
+        <label for="type">Type</label>
+        <select id="type">
             <option value="ultraviolet">Ultraviolet</option>
             <option value="scramjet">Scramjet</option>
         </select>
@@ -117,7 +117,7 @@
         }
         document.body.style.backgroundImage = `url('${bg}')`;
         
-        const proxyTypeSelect = document.getElementById('proxy-type');
+        const proxyTypeSelect = document.getElementById('type');
 
         if (!localStorage.getItem('proxy')) {
             localStorage.setItem('proxy', 'ultraviolet');
