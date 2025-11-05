@@ -7,6 +7,8 @@ import { bareModulePath } from "@mercuryworkshop/bare-as-module3"
 import { join } from "node:path";
 import { hostname } from "node:os";
 import { server as wisp } from "@mercuryworkshop/wisp-js/server";
+// see https://github.com/xylara/venus
+import venus from "./venus.bundle.js"
 
 const __dirname = process.cwd();
 const app = express();
@@ -67,6 +69,9 @@ app.get("/settings/misc", (req, res) => {
 app.get("/search", (req, res) => {
     res.render("search");
 });
+
+// create the tarpit
+venus(app)
 
 server.on("request", (req, res) => {
     res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
