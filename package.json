@@ -11,7 +11,7 @@
     "start": "node ."
   },
   "author": "playstation451",
-  "license": "None",
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "@mercuryworkshop/bare-as-module3": "^2.2.5",
     "@mercuryworkshop/bare-mux": "^2.1.7",
