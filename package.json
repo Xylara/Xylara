@@ -16,7 +16,7 @@
     "@mercuryworkshop/bare-as-module3": "^2.2.5",
     "@mercuryworkshop/bare-mux": "^2.1.7",
     "@mercuryworkshop/epoxy-transport": "^2.1.27",
-    "@mercuryworkshop/libcurl-transport": "^1.4.0",
+    "@mercuryworkshop/libcurl-transport": "^1.5.1",
     "@mercuryworkshop/wisp-js": "^0.3.3",
     "@tomphttp/bare-server-node": "^2.0.5",
     "ejs": "^3.1.10",
