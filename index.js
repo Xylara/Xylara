@@ -1,7 +1,5 @@
 import express from "express";
 import { createServer } from "node:http";
-import Groq from "groq-sdk";
-import { GoogleGenAI } from "@google/genai";
 import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
 import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
@@ -17,7 +15,6 @@ const app = express();
 
 const publicPath = join(__dirname, "public");
 app.use(express.static(publicPath));
-app.use(express.json());
 
 app.set('view engine', 'ejs');
 app.set('views', join(__dirname, 'views'));
@@ -57,10 +54,6 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
-app.get("/ask", (req, res) => {
-    res.render("ask");
-});
-
 app.get("/settings", (req, res) => {
     res.render("settings/index");
 });
@@ -75,52 +68,6 @@ app.get("/settings/misc", (req, res) => {
 
 app.get("/search", (req, res) => {
     res.render("search");
-});
-
-app.post("/api/ask", async (req, res) => {
-    const { service, model, prompt, apiKey } = req.body;
-
-    if (!apiKey || !prompt || !model) {
-        return res.status(400).json({ error: "Missing required parameters (apiKey, prompt, or model)." });
-    }
-
-    try {
-        let responseText;
-
-        if (service === 'groq') {
-            const groq = new Groq({ apiKey: apiKey });
-            
-            const completion = await groq.chat.completions.create({
-                messages: [
-                    {
-                        role: "user",
-                        content: prompt,
-                    },
-                ],
-                model: model,
-            });
-            responseText = completion.choices[0].message.content;
-
-        } else if (service === 'gemini') {
-            const ai = new GoogleGenAI({ apiKey: apiKey });
-            
-            const geminiModel = model === 'latest' ? 'gemini-2.5-flash' : model;
-
-            const response = await ai.models.generateContent({
-                model: geminiModel,
-                contents: prompt,
-            });
-            responseText = response.text;
-
-        } else {
-            return res.status(400).json({ error: "Unsupported AI service." });
-        }
-
-        res.json({ response: responseText });
-    } catch (error) {
-        console.error(`${service} API Error:`, error);
-        res.status(500).json({ error: `Failed to get response from ${service} API.` });
-    }
 });
 
 // create the tarpit

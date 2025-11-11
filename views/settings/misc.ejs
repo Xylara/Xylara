@@ -1,25 +1,13 @@
- <%- include('../parts/topbar') %>
+<%- include('../parts/topbar') %>
 <%- include('../parts/sidebar') %>
 <script src="https://app.rybbit.io/api/script.js" data-site-id="8b65ec526edf" defer></script>
 <title>Xylara</title>
 
 <div class="settings-container">
     <div class="setting-item">
-        <label for="background-image">Background Image</label>
-        <select id="background-image">
-            <option value="/assets/backgrounds/foggy-forest.png">Foggy Forest</option>
-            <option value="/assets/backgrounds/floating-tree.png">Floating Tree</option>
-            <option value="/assets/backgrounds/stormy-rocket.png">Stormy Rocket</option>
-            <option value="/assets/backgrounds/end-of-the-world.png">End of the World</option>
-        </select>
+        <label for="background-image">Honestly idk what to even add here</label>
     </div>
 </div>
-
-<div class="settings-container">
-    <div class="setting-item">
-        <label for="ai-api-key">AI API Key</label>
-        <input type="text" id="ai-api-key" placeholder="Enter your API key">
-    </div>
  
 <style>
     body {
@@ -71,20 +59,12 @@
         font-size: 1em;
         cursor: pointer;
     }
-    .setting-item input[type="text"] {
-        padding: 8px;
-        border-radius: 5px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        background-color: rgba(255, 255, 255, 0.1);
-        color: white;
-        font-size: 1em;
-        width: 50%;
-    }
 
     .setting-item select option {
         background-color: #333;
         color: white;
     }
+</style>
 
 </style>
 
@@ -109,18 +89,6 @@
             const selectedBg = event.target.value;
             localStorage.setItem('bg', selectedBg);
             document.body.style.backgroundImage = `url('${selectedBg}')`;
-        });
-
-        const aiApiKeyInput = document.getElementById('ai-api-key');
-
-        if (!localStorage.getItem('ai-api-key')) {
-            localStorage.setItem('ai-api-key', '');
-        }
-
-        aiApiKeyInput.value = localStorage.getItem('ai-api-key');
-
-        aiApiKeyInput.addEventListener('input', (event) => {
-            localStorage.setItem('ai-api-key', event.target.value);
         });
     });
 </script>
