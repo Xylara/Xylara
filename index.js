@@ -50,8 +50,12 @@ app.get("/libcurl/index.js", (req, res) => {
     res.sendFile(join(libcurlPath, "index.js"), { headers: { 'Content-Type': 'application/javascript' } });
 });
 
+// create the tarpit
+let _venus = venus(app)
+
+
 app.get("/", (req, res) => {
-    res.render("index");
+    res.render("index", {_venus});
 });
 
 app.get("/settings", (req, res) => {
@@ -69,9 +73,6 @@ app.get("/settings/misc", (req, res) => {
 app.get("/search", (req, res) => {
     res.render("search");
 });
-
-// create the tarpit
-venus(app)
 
 server.on("request", (req, res) => {
     res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
