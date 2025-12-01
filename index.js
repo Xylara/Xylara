@@ -53,7 +53,7 @@ app.get("/libcurl/index.js", (req, res) => {
 // create the tarpit
 let _venus = venus(app)
 // if you ignore robots.txt get fucked
-app.get("robots.txt", (req, res) => {
+app.get("/robots.txt", (req, res) => {
     res.type("text/plain");
     res.send(`User-agent: *\nDisallow: ${_venus}`);
 })
