@@ -8,7 +8,7 @@ import { join } from "node:path";
 import { hostname } from "node:os";
 import { server as wisp } from "@mercuryworkshop/wisp-js/server";
 // see https://github.com/xylara/venus
-import venus from "./venus.bundle.js"
+import venus from "venus-pit"
 
 const __dirname = process.cwd();
 const app = express();
