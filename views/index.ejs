@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xylara</title>
+
     <script src="https://app.rybbit.io/api/script.js" data-site-id="8b65ec526edf" defer></script>
-    <link rel="prefetch" href="/scram/scramjet.all.js" />
-    <script src="/scram/scramjet.all.js"></script>
-    <script src="/baremux"></script>
-    <script src="/epoxy"></script>
-    <link rel="icon" type="image/png" src="/assets/favicon.png">
+
+    <script src="/baremux/index.js"></script>
+    <script src="/epoxy/index.mjs" type="module"></script>
     <script src="/uv/uv.bundle.js"></script>
     <script src="/uv/uv.config.js"></script>
+    <link rel="prefetch" href="/scram/scramjet.all.js" />
+    <script src="/scram/scramjet.all.js"></script>
+
+    <link rel="icon" type="image/png" src="/assets/favicon.png">
+
     <style>
         body {
             margin: 0;
@@ -122,6 +126,7 @@
             background-color: rgba(0, 0, 0, 0.7);
         }
     </style>
+
     <script>
         let scramjetReady;
 
@@ -230,7 +235,7 @@
                 } catch (e) {
                     isLikelySearch = true;
                 }
-                if (isLikelySearch) url = new URL((localStorage.getItem('search') || 'https://www.google.com/search?q=') + query);
+                if (isLikelySearch) url = new URL((localStorage.getItem('search') || 'https://www.google.com/search?q=') + encodeURIComponent(query));
                 await encodeURL(url.toString());
             };
 
@@ -328,4 +333,3 @@
     <a href="<%= _venus%>" class="venusFooter">Venus integration</a>
 </body>
 </html>
-
