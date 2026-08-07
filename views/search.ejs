@@ -71,8 +71,6 @@
         const frame = document.getElementById("Frame");
         const input = document.getElementById("url-input");
 
-        let appReady;
-
         function decode(url) {
             try {
                 if (url.includes(__uv$config.prefix)) {
@@ -87,8 +85,6 @@
         }
 
         async function handleNavigation(query) {
-            if (appReady) await appReady;
-
             let url = query.trim();
             if (!url) return;
 
@@ -124,39 +120,15 @@
             } catch (err) {
                 console.error(err);
             }
-
-            try {
-    
-                const { ScramjetController } = $scramjetLoadController();
-                const scramjet = new ScramjetController({
-                    prefix: "/scram/service/",
-                    files: {
-                        wasm: "/scram/scramjet.wasm.wasm",
-                        all: "/scram/scramjet.all.js",
-                        sync: "/scram/scramjet.sync.js"
-                    },
-                    flags: {
-                        syncxhr: true
-                    }
-                });
-                window.sj = scramjet;
-                await scramjet.init();
-            } catch (error) {
-                console.error(error);
-            }
         }
 
-        document.addEventListener("DOMContentLoaded", async () => {
-            appReady = init();
-
+        document.addEventListener("DOMContentLoaded", () => {
             const initialUrl = localStorage.getItem("url");
             if (initialUrl) {
-                if (initialUrl.includes("/scram/service/")) {
-                    await appReady;
-                }
                 frame.src = initialUrl;
                 input.value = decode(initialUrl);
             }
+            init();
         });
 
         input.addEventListener("keydown", (e) => {
