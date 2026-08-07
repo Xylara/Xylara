@@ -1,13 +1,11 @@
 importScripts('/uv/uv.bundle.js');
 importScripts('/uv/uv.config.js');
 importScripts('/uv/uv.sw.js');
-importScripts('/scram/scramjet.all.js');
+importScripts("/scram/scramjet.all.js");
 
 const uv = new UVServiceWorker();
 const { ScramjetServiceWorker: SJWorker } = $scramjetLoadWorker();
 const scramjet = new SJWorker();
-
-let scramjetInitPromise = scramjet.loadConfig().catch(() => {});
 
 self.addEventListener("install", () => {
     self.skipWaiting();
@@ -22,11 +20,8 @@ async function handleRequest(event) {
         return await uv.fetch(event);
     }
 
-    try {
-        await scramjetInitPromise;
-    } catch (e) {}
-
-    if (scramjet.config && scramjet.route(event)) {
+    await scramjet.loadConfig();
+    if (scramjet.route(event)) {
         return await scramjet.fetch(event);
     }
 
@@ -35,7 +30,8 @@ async function handleRequest(event) {
 
 self.addEventListener("fetch", (event) => {
     event.respondWith(
-        handleRequest(event).catch(() => {
+        handleRequest(event).catch((err) => {
+            console.error(err);
             return fetch(event.request);
         })
     );
