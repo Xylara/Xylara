@@ -16,15 +16,15 @@ self.addEventListener("activate", (event) => {
 });
 
 async function handleRequest(event) {
-    if (uv.route(event)) {
-        return await uv.fetch(event);
+    if (uv.route(event)) return await uv.fetch(event);
+    try {
+        await scramjet.loadConfig();
+    } catch (e) {
+        console.warn("scramjet config not ready, retrying...", e);
+        await new Promise(r => setTimeout(r, 300));
+        await scramjet.loadConfig();
     }
-
-    await scramjet.loadConfig();
-    if (scramjet.route(event)) {
-        return await scramjet.fetch(event);
-    }
-
+    if (scramjet.route(event)) return await scramjet.fetch(event);
     return await fetch(event.request);
 }
 
