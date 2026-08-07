@@ -123,6 +123,8 @@
         }
     </style>
     <script>
+        let appReady;
+
         async function uvEncode(url) {
             const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
             localStorage.setItem("url", encodedUrl);
@@ -175,13 +177,29 @@
             }
         }
 
-        function resetSiteData() {
+        async function resetSiteData() {
             if (confirm("Reset all settings, custom apps, and site data?")) {
                 localStorage.clear();
-                if (navigator.serviceWorker) {
-                    navigator.serviceWorker.getRegistrations().then(registrations => {
-                        for (let r of registrations) r.unregister();
-                    });
+                try {
+                    if (navigator.serviceWorker) {
+                        const registrations = await navigator.serviceWorker.getRegistrations();
+                        for (let r of registrations) await r.unregister();
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+                try {
+                    if (indexedDB.databases) {
+                        const dbs = await indexedDB.databases();
+                        await Promise.all(dbs.map(db => new Promise((resolve) => {
+                            const req = indexedDB.deleteDatabase(db.name);
+                            req.onsuccess = resolve;
+                            req.onerror = resolve;
+                            req.onblocked = resolve;
+                        })));
+                    }
+                } catch (err) {
+                    console.error(err);
                 }
                 window.location.reload();
             }
@@ -196,7 +214,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            init();
+            appReady = init();
             const defaultBg = '/assets/backgrounds/foggy-forest.png';
             let bg = localStorage.getItem('bg') || defaultBg;
             document.body.style.backgroundImage = `url('${bg}')`;
@@ -208,7 +226,8 @@
             const appButtonsDiv = document.querySelector('.app-buttons');
             const addAppButton = document.getElementById('add-app-button');
 
-            const encodeURL = async (url) => {
+            const encodeURL = async (
+                if (appReady) await appReady;
                 let proxyType = localStorage.getItem('proxy') || 'ultraviolet';
                 proxyType === 'ultraviolet' ? await uvEncode(url) : await sjEncode(url);
             };
