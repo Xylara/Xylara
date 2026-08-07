@@ -4,18 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xylara</title>
-
     <script src="https://app.rybbit.io/api/script.js" data-site-id="8b65ec526edf" defer></script>
-
-    <script src="/baremux/index.js"></script>
-    <script src="/epoxy/index.mjs" type="module"></script>
-    <script src="/uv/uv.bundle.js"></script>
-    <script src="/uv/uv.config.js"></script>
     <link rel="prefetch" href="/scram/scramjet.all.js" />
     <script src="/scram/scramjet.all.js"></script>
-
+    <script src="/baremux"></script>
+    <script src="/epoxy"></script>
     <link rel="icon" type="image/png" src="/assets/favicon.png">
-
+    <script src="/uv/uv.bundle.js"></script>
+    <script src="/uv/uv.config.js"></script>
     <style>
         body {
             margin: 0;
@@ -126,10 +122,7 @@
             background-color: rgba(0, 0, 0, 0.7);
         }
     </style>
-
     <script>
-        let scramjetReady;
-
         async function uvEncode(url) {
             const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
             localStorage.setItem("url", encodedUrl);
@@ -143,46 +136,43 @@
         }
 
         async function init() {
-            scramjetReady = (async () => {
-                try {
-                    const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
-                    let transport = localStorage.getItem("transport") || "libcurl";
-                    localStorage.setItem("transport", transport);
-                    let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
-                    if (localStorage.getItem("wisp-server-type") === "custom") {
-                        const customWisp = localStorage.getItem("wisp");
-                        if (customWisp) wispUrl = customWisp;
-                    } else {
-                        localStorage.setItem("wisp", wispUrl);
-                    }
-                    const transportPath = transport === "epoxy" ? "/epoxy/index.mjs" : "/libcurl/index.mjs";
-                    if (await connection.getTransport() !== transportPath) {
-                        await connection.setTransport(transportPath, [{ wisp: wispUrl }]);
-                    }
-                } catch (err) {
-                    console.error(err);
+            try {
+                const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+                let transport = localStorage.getItem("transport") || "libcurl";
+                localStorage.setItem("transport", transport);
+                let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+                if (localStorage.getItem("wisp-server-type") === "custom") {
+                    const customWisp = localStorage.getItem("wisp");
+                    if (customWisp) wispUrl = customWisp;
+                } else {
+                    localStorage.setItem("wisp", wispUrl);
                 }
+                const transportPath = transport === "epoxy" ? "/epoxy/index.mjs" : "/libcurl/index.mjs";
+                if (await connection.getTransport() !== transportPath) {
+                    await connection.setTransport(transportPath, [{ wisp: wispUrl }]);
+                }
+            } catch (err) {
+                console.error(err);
+            }
 
-                try {
-                    const { ScramjetController } = $scramjetLoadController();
-                    const scramjet = new ScramjetController({
-                        prefix: "/scram/service/",
-                        files: {
-                            wasm: "/scram/scramjet.wasm.wasm",
-                            all: "/scram/scramjet.all.js",
-                            sync: "/scram/scramjet.sync.js"
-                        },
-                        flags: {
-                            syncxhr: true
-                        }
-                    });
-                    window.sj = scramjet;
-                    await scramjet.init();
-                } catch (error) {
-                    console.error(error);
-                }
-            })();
-            await scramjetReady;
+            try {
+                const { ScramjetController } = $scramjetLoadController();
+                const scramjet = new ScramjetController({
+                    prefix: "/scram/service/",
+                    files: {
+                        wasm: "/scram/scramjet.wasm.wasm",
+                        all: "/scram/scramjet.all.js",
+                        sync: "/scram/scramjet.sync.js"
+                    },
+                    flags: {
+                        syncxhr: true
+                    }
+                });
+                window.sj = scramjet;
+                await scramjet.init();
+            } catch (error) {
+                console.error(error);
+            }
         }
 
         function resetSiteData() {
@@ -226,7 +216,6 @@
             const handleSearch = async () => {
                 const query = searchInput.value.trim();
                 if (!query) return;
-                await scramjetReady;
                 let url;
                 let isLikelySearch = false;
                 try {
@@ -235,7 +224,7 @@
                 } catch (e) {
                     isLikelySearch = true;
                 }
-                if (isLikelySearch) url = new URL((localStorage.getItem('search') || 'https://www.google.com/search?q=') + encodeURIComponent(query));
+                if (isLikelySearch) url = new URL((localStorage.getItem('search') || 'https://www.google.com/search?q=') + query);
                 await encodeURL(url.toString());
             };
 
