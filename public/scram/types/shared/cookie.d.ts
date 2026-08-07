@@ -2,17 +2,25 @@ export type Cookie = {
     name: string;
     value: string;
     path?: string;
-    expires?: string;
+    expires?: number;
     maxAge?: number;
     domain?: string;
+    hostOnly?: boolean;
     secure?: boolean;
     httpOnly?: boolean;
-    sameSite?: "strict" | "lax" | "none";
+    sameSite?: string;
 };
-export declare class CookieStore {
+export declare class CookieJar {
     private cookies;
-    setCookies(cookies: string[], url: URL): void;
-    getCookies(url: URL, fromJs: boolean): string;
-    load(cookies: string): null;
+    private byDomain;
+    private defaultPath;
+    private pathMatches;
+    private indexCookie;
+    private unindexCookie;
+    private removeById;
+    setCookies(cookieString: string, url: URL): void;
+    getCookies(url: URL, fromJs: boolean, sameSiteContext?: "strict" | "lax" | "cross-site"): string;
+    load(cookies: string | Record<string, Cookie>): void;
+    clear(): void;
     dump(): string;
 }

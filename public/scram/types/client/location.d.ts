@@ -1,2 +1,2 @@
-import { ScramjetClient } from "./index";
-export declare function createLocationProxy(client: ScramjetClient, self: typeof globalThis): any;
+import { ScramjetClient } from "@client/index";
+export declare function createLocationProxy(client: ScramjetClient, self: GlobalThis): any;

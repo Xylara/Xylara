@@ -1,4 +1,4 @@
-import { ScramjetClient } from "../index";
+import { ScramjetClient } from "@client/index";
 declare enum RewriteType {
     Insert = 0,
     Replace = 1
