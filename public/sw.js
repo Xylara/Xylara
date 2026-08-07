@@ -7,9 +7,7 @@ const uv = new UVServiceWorker();
 const { ScramjetServiceWorker: SJWorker } = $scramjetLoadWorker();
 const scramjet = new SJWorker();
 
-let scramjetInitPromise = scramjet.loadConfig().catch((err) => {
-    console.warn("Initial Scramjet config load deferred:", err);
-});
+let scramjetInitPromise = scramjet.loadConfig().catch(() => {});
 
 self.addEventListener("install", () => {
     self.skipWaiting();
@@ -24,8 +22,11 @@ async function handleRequest(event) {
         return await uv.fetch(event);
     }
 
-    if (scramjet.route(event)) {
+    try {
         await scramjetInitPromise;
+    } catch (e) {}
+
+    if (scramjet.config && scramjet.route(event)) {
         return await scramjet.fetch(event);
     }
 
@@ -34,8 +35,7 @@ async function handleRequest(event) {
 
 self.addEventListener("fetch", (event) => {
     event.respondWith(
-        handleRequest(event).catch((err) => {
-            console.error("SW Fetch handling failed:", err);
+        handleRequest(event).catch(() => {
             return fetch(event.request);
         })
     );
