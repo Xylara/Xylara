@@ -120,15 +120,33 @@
             } catch (err) {
                 console.error(err);
             }
+
+            try {
+                const { ScramjetController } = $scramjetLoadController();
+                const scramjet = new ScramjetController({
+                    prefix: "/scram/service/",
+                    files: {
+                        wasm: "/scram/scramjet.wasm.wasm",
+                        all: "/scram/scramjet.all.js",
+                        sync: "/scram/scramjet.sync.js"
+                    },
+                    flags: {
+                        syncxhr: true
+                    }
+                });
+                await scramjet.init();
+            } catch (e) { 
+                console.error(e); 
+            }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
+            await init();
             const initialUrl = localStorage.getItem("url");
             if (initialUrl) {
                 frame.src = initialUrl;
                 input.value = decode(initialUrl);
             }
-            init();
         });
 
         input.addEventListener("keydown", (e) => {
