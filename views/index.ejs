@@ -170,20 +170,42 @@
         try {
             const scramjetModule = await import('/scram/scramjet.js');
             
-            console.log("Scramjet Module:", scramjetModule);
-            console.log("window.$scramjet:", window.$scramjet);
-            console.log("window.ScramjetController:", window.ScramjetController);
+            const candidates = [
+                scramjetModule,
+                scramjetModule.default,
+                window.$scramjet,
+                window.$scramjet?.default,
+                window
+            ];
 
-            const ControllerClass = 
-                scramjetModule.ScramjetController || 
-                scramjetModule.Controller || 
-                scramjetModule.default?.ScramjetController || 
-                scramjetModule.default?.Controller || 
-                (typeof scramjetModule.default === 'function' ? scramjetModule.default : null) ||
-                window.ScramjetController ||
-                window.$scramjet?.ScramjetController ||
-                window.$scramjet?.Controller ||
-                (typeof window.$scramjet === 'function' ? window.$scramjet : null);
+            let ControllerClass = null;
+
+            for (const candidate of candidates) {
+                if (!candidate) continue;
+                if (typeof candidate === 'function') {
+                    ControllerClass = candidate;
+                    break;
+                }
+                ControllerClass = 
+                    candidate.ScramjetController || 
+                    candidate.Scramjet || 
+                    candidate.Controller || 
+                    candidate.Client;
+                if (typeof ControllerClass === 'function') break;
+            }
+
+            if (typeof ControllerClass !== 'function') {
+                for (const candidate of candidates) {
+                    if (!candidate || typeof candidate !== 'object') continue;
+                    for (const key of Object.keys(candidate)) {
+                        if (typeof candidate[key] === 'function' && /^[A-Z]/.test(key)) {
+                            ControllerClass = candidate[key];
+                            break;
+                        }
+                    }
+                    if (typeof ControllerClass === 'function') break;
+                }
+            }
 
             if (typeof ControllerClass === 'function') {
                 const scramjet = new ControllerClass({
@@ -197,7 +219,7 @@
                 await scramjet.init();
                 console.log("Scramjet initialized successfully!");
             } else {
-                console.error("ScramjetController constructor could not be resolved. Review console logs above.");
+                console.error("Scramjet constructor could not be resolved from module:", scramjetModule);
             }
         } catch (error) {
             console.error("Scramjet init error:", error);
