@@ -4,14 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xylara</title>
-    <script src="https://app.rybbit.io/api/script.js" data-site-id="8b65ec526edf" defer></script>
+    
     <link rel="prefetch" href="/scram/scramjet.js" />
-    <script src="/scram/scramjet.js"></script>
+    <script type="module">
+        import * as ScramjetModule from '/scram/scramjet.js';
+        window.$scramjet = ScramjetModule.default || ScramjetModule;
+    </script>
+
     <script src="/baremux"></script>
     <script src="/epoxy"></script>
-    <link rel="icon" type="image/png" src="/assets/favicon.png">
     <script src="/uv/uv.bundle.js"></script>
     <script src="/uv/uv.config.js"></script>
+
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
     <style>
         body {
             margin: 0;
