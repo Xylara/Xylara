@@ -168,10 +168,15 @@
         }
 
         try {
-                const scramjetModule = await import('/scram/scramjet.js');
-                const $scram = scramjetModule.default || scramjetModule;
-                const ControllerClass = $scram.ScramjetController || $scram.Controller || $scram;
+            const scramjetModule = await import('/scram/scramjet.js');
+            const ControllerClass = 
+                scramjetModule.ScramjetController || 
+                scramjetModule.default?.ScramjetController || 
+                (typeof scramjetModule.default === 'function' ? scramjetModule.default : null) ||
+                window.$scramjet?.ScramjetController ||
+                window.$scramjet;
 
+            if (typeof ControllerClass === 'function') {
                 const scramjet = new ControllerClass({
                     prefix: "/scram/service/",
                     files: {
@@ -181,10 +186,13 @@
                 });
                 window.sj = scramjet;
                 await scramjet.init();
-            } catch (error) {
-                console.error("Scramjet init error:", error);
+            } else {
+                console.error("ScramjetController constructor not found:", scramjetModule);
             }
+        } catch (error) {
+            console.error("Scramjet init error:", error);
         }
+    }
 
     function resetSiteData() {
         if (confirm("Reset all settings, custom apps, and site data?")) {
