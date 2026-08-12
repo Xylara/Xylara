@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://app.rybbit.io/api/script.js" data-site-id="8b65ec526edf" defer></script>
     <script src="/baremux/index.js"></script>
     <script src="/epoxy/index.mjs" type="module"></script>
     <script src="/uv/uv.bundle.js"></script>
@@ -126,6 +125,7 @@
             }
 
             try {
+                await navigator.serviceWorker.ready;
                 const serviceworker = navigator.serviceWorker.controller ?? (await navigator.serviceWorker.ready).active;
                 let wispUrl = localStorage.getItem("wisp") || ((location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/");
 
@@ -155,14 +155,16 @@
                 scramjetFrame = scramjet.createFrame(frameEl);
 
                 const savedUrl = localStorage.getItem("url");
+                const proxyType = localStorage.getItem('proxy') || 'ultraviolet';
+
                 if (savedUrl) {
-                    const proxyType = localStorage.getItem('proxy') || 'ultraviolet';
-                    if (proxyType === 'scramjet' || savedUrl.startsWith("http")) {
-                        const target = savedUrl.startsWith("http") ? savedUrl : "https://play.geforcenow.com";
+                    if (proxyType === 'scramjet' || !savedUrl.startsWith(__uv$config.prefix)) {
+                        const target = savedUrl.startsWith("http") ? savedUrl : "https://example.com";
                         scramjetFrame.go(target);
                         input.value = target;
                     } else {
                         frameEl.src = savedUrl;
+                        input.value = savedUrl;
                     }
                 }
             } catch (error) {
