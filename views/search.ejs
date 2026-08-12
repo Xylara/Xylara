@@ -156,9 +156,11 @@
 
                 const savedUrl = localStorage.getItem("url");
                 if (savedUrl) {
-                    if (savedUrl.startsWith("http")) {
-                        scramjetFrame.go(savedUrl);
-                        input.value = savedUrl;
+                    const proxyType = localStorage.getItem('proxy') || 'ultraviolet';
+                    if (proxyType === 'scramjet' || savedUrl.startsWith("http")) {
+                        const target = savedUrl.startsWith("http") ? savedUrl : "https://play.geforcenow.com";
+                        scramjetFrame.go(target);
+                        input.value = target;
                     } else {
                         frameEl.src = savedUrl;
                     }
