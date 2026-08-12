@@ -169,12 +169,21 @@
 
         try {
             const scramjetModule = await import('/scram/scramjet.js');
+            
+            console.log("Scramjet Module:", scramjetModule);
+            console.log("window.$scramjet:", window.$scramjet);
+            console.log("window.ScramjetController:", window.ScramjetController);
+
             const ControllerClass = 
                 scramjetModule.ScramjetController || 
+                scramjetModule.Controller || 
                 scramjetModule.default?.ScramjetController || 
+                scramjetModule.default?.Controller || 
                 (typeof scramjetModule.default === 'function' ? scramjetModule.default : null) ||
+                window.ScramjetController ||
                 window.$scramjet?.ScramjetController ||
-                window.$scramjet;
+                window.$scramjet?.Controller ||
+                (typeof window.$scramjet === 'function' ? window.$scramjet : null);
 
             if (typeof ControllerClass === 'function') {
                 const scramjet = new ControllerClass({
@@ -186,8 +195,9 @@
                 });
                 window.sj = scramjet;
                 await scramjet.init();
+                console.log("Scramjet initialized successfully!");
             } else {
-                console.error("ScramjetController constructor not found:", scramjetModule);
+                console.error("ScramjetController constructor could not be resolved. Review console logs above.");
             }
         } catch (error) {
             console.error("Scramjet init error:", error);
