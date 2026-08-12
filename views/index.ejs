@@ -132,15 +132,7 @@
     }
 
     async function sjEncode(url) {
-        let encodedUrl;
-        if (window.sj && typeof window.sj.encodeUrl === 'function') {
-            encodedUrl = window.sj.encodeUrl(url);
-        } else if (window.sj && typeof window.sj.encode === 'function') {
-            encodedUrl = window.sj.encode(url);
-        } else {
-            encodedUrl = "/scram/service/" + encodeURIComponent(url);
-        }
-        localStorage.setItem("url", encodedUrl);
+        localStorage.setItem("url", url);
         window.location.href = "/search";
     }
 
@@ -198,7 +190,6 @@
 
             await scramjet.wait();
             window.sj = scramjet;
-            console.log("Scramjet v2 initialized successfully!");
         } catch (error) {
             console.error("Scramjet init error:", error);
         }
