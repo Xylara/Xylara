@@ -76,10 +76,9 @@
             try {
                 if (url.includes(__uv$config.prefix)) {
                     return __uv$config.decodeUrl(url.split(__uv$config.prefix)[1]);
+                } else if (window.$scramjet && typeof $scramjet.decodeUrl === 'function') {
+                    return $scramjet.decodeUrl(url);
                 } else if (url.includes("/scram/service/")) {
-                    if (window.sj && typeof window.sj.decodeUrl === 'function') {
-                        return window.sj.decodeUrl(url);
-                    }
                     return decodeURIComponent(url.split("/scram/service/")[1]);
                 }
             } catch (e) {
@@ -93,10 +92,10 @@
             if (proxyType === 'ultraviolet') {
                 return __uv$config.prefix + __uv$config.encodeUrl(url);
             } else {
-                if (window.sj && typeof window.sj.encodeUrl === 'function') {
+                if (window.$scramjet && typeof $scramjet.encodeUrl === 'function') {
+                    return $scramjet.encodeUrl(url);
+                } else if (window.sj && typeof window.sj.encodeUrl === 'function') {
                     return window.sj.encodeUrl(url);
-                } else if (window.sj && typeof window.sj.encode === 'function') {
-                    return window.sj.encode(url);
                 }
                 return "/scram/service/" + encodeURIComponent(url);
             }
@@ -113,7 +112,6 @@
             }
 
             const encoded = await encodeURL(url);
-            
             localStorage.setItem("url", encoded);
             frame.src = encoded;
             input.value = url;
@@ -124,9 +122,17 @@
             if ('serviceWorker' in navigator) {
                 try {
                     await navigator.serviceWorker.register("/sw.js");
+                    await navigator.serviceWorker.ready;
                 } catch (err) {
                     console.error("SW Registration error:", err);
                 }
+            }
+
+            if (!navigator.serviceWorker.controller) {
+                await new Promise((resolve) => {
+                    navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
+                    setTimeout(resolve, 500);
+                });
             }
 
             try {
@@ -142,9 +148,7 @@
             }
 
             try {
-                await navigator.serviceWorker.ready;
                 const serviceworker = navigator.serviceWorker.controller ?? (await navigator.serviceWorker.ready).active;
-
                 let wispUrl = localStorage.getItem("wisp") || ((location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/");
 
                 let EpoxyTransport;
