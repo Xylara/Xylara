@@ -6,7 +6,7 @@
     <title>Xylara</title>
     
     <script src="/scram/scramjet.js"></script>
-    <script src="/controller/controller.api.js"></script>
+    <script src="/scram/controller.api.js"></script>
     <script src="/epoxy/index.js"></script>
 
     <script src="/baremux/index.js"></script>
@@ -178,7 +178,14 @@
 
             const { Controller } = $scramjetController;
             const { defaultConfig } = $scramjet;
-            const EpoxyTransport = self.EpoxyTransport?.default || self.EpoxyTransport;
+
+            let EpoxyTransport;
+            if (self.EpoxyTransport) {
+                EpoxyTransport = self.EpoxyTransport.EpoxyTransport || self.EpoxyTransport.default || self.EpoxyTransport;
+            } else {
+                const epoxyModule = await import('/epoxy/index.mjs');
+                EpoxyTransport = epoxyModule.EpoxyTransport || epoxyModule.default;
+            }
 
             const transport = new EpoxyTransport({ wisp: wispUrl });
             await transport.init();
