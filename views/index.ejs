@@ -5,14 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xylara</title>
     
-    <link rel="prefetch" href="/scram/scramjet.js" />
-    <script type="module">
-        import * as ScramjetModule from '/scram/scramjet.js';
-        window.$scramjet = ScramjetModule.default || ScramjetModule;
-    </script>
+    <script src="/scram/scramjet.js"></script>
+    <script src="/controller/controller.api.js"></script>
+    <script src="/epoxy/index.js"></script>
 
-    <script src="/baremux"></script>
-    <script src="/epoxy"></script>
+    <script src="/baremux/index.js"></script>
     <script src="/uv/uv.bundle.js"></script>
     <script src="/uv/uv.config.js"></script>
 
@@ -170,37 +167,31 @@
         }
 
         try {
-            const scramjetModule = await import('/scram/scramjet.js');
-            
-            const ControllerClass = 
-                scramjetModule.ScramjetController || 
-                scramjetModule.Controller || 
-                scramjetModule.default?.ScramjetController || 
-                scramjetModule.default?.Controller || 
-                (typeof scramjetModule.default === 'function' ? scramjetModule.default : null) ||
-                window.ScramjetController ||
-                window.$scramjet?.ScramjetController ||
-                window.$scramjet?.Controller ||
-                (typeof window.$scramjet === 'function' ? window.$scramjet : null);
+            await navigator.serviceWorker.ready;
+            const serviceworker = navigator.serviceWorker.controller ?? (await navigator.serviceWorker.ready).active;
 
-            if (typeof ControllerClass === 'function') {
-                const scramjet = new ControllerClass({
-                    prefix: "/scram/service/",
-                    files: {
-                        wasm: "/scram/scramjet.wasm",
-                        all: "/scram/scramjet.js",
-                    }
-                });
-                window.sj = scramjet;
-
-                if (typeof scramjet.init === 'function') {
-                    await scramjet.init();
-                }
-
-                console.log("Scramjet initialized successfully!");
-            } else {
-                console.error("Scramjet constructor could not be resolved.");
+            let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+            if (localStorage.getItem("wisp-server-type") === "custom") {
+                const customWisp = localStorage.getItem("wisp");
+                if (customWisp) wispUrl = customWisp;
             }
+
+            const { Controller } = $scramjetController;
+            const { defaultConfig } = $scramjet;
+            const EpoxyTransport = self.EpoxyTransport?.default || self.EpoxyTransport;
+
+            const transport = new EpoxyTransport({ wisp: wispUrl });
+            await transport.init();
+
+            const scramjet = new Controller({
+                serviceworker,
+                transport,
+                scramjetConfig: defaultConfig
+            });
+
+            await scramjet.wait();
+            window.sj = scramjet;
+            console.log("Scramjet v2 initialized successfully!");
         } catch (error) {
             console.error("Scramjet init error:", error);
         }
@@ -219,11 +210,7 @@
     }
 
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(registrations => {
-            if (registrations.length === 0) {
-                navigator.serviceWorker.register("sw.js").catch(err => console.error("SW Registration error:", err));
-            }
-        });
+        navigator.serviceWorker.register("sw.js").catch(err => console.error("SW Registration error:", err));
     }
 
     document.addEventListener('DOMContentLoaded', () => {
