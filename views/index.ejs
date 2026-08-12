@@ -146,7 +146,6 @@
     }
 
     async function init() {
-        // BareMux Initialization
         try {
             const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
             let transport = localStorage.getItem("transport") || "libcurl";
@@ -168,18 +167,11 @@
             console.error("BareMux init error:", err);
         }
 
-        // Safe Scramjet Controller Resolution & Initialization
         try {
-            let ControllerClass;
+                const scramjetModule = await import('/scram/scramjet.js');
+                const $scram = scramjetModule.default || scramjetModule;
+                const ControllerClass = $scram.ScramjetController || $scram.Controller || $scram;
 
-            if (typeof window.$scramjetLoadController === 'function') {
-                const loaded = window.$scramjetLoadController();
-                ControllerClass = loaded.ScramjetController || loaded;
-            } else if (window.$scramjet) {
-                ControllerClass = window.$scramjet.ScramjetController || window.$scramjet.Controller || window.$scramjet;
-            }
-
-            if (typeof ControllerClass === 'function') {
                 const scramjet = new ControllerClass({
                     prefix: "/scram/service/",
                     files: {
@@ -189,13 +181,10 @@
                 });
                 window.sj = scramjet;
                 await scramjet.init();
-            } else {
-                console.warn("Scramjet controller not available on window object.");
+            } catch (error) {
+                console.error("Scramjet init error:", error);
             }
-        } catch (error) {
-            console.error("Scramjet init error:", error);
         }
-    }
 
     function resetSiteData() {
         if (confirm("Reset all settings, custom apps, and site data?")) {
