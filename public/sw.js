@@ -2,13 +2,26 @@ importScripts('/uv/uv.bundle.js');
 importScripts('/uv/uv.config.js');
 importScripts('/uv/uv.sw.js');
 
-self.window = self;
-self.document = self.document || {
-    createElement: () => ({}),
-    getElementsByTagName: () => [],
-    head: {},
-    body: {}
+const nativeGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+Object.getOwnPropertyDescriptor = function(target, prop) {
+    const desc = nativeGetOwnPropertyDescriptor(target, prop);
+    if (desc) return desc;
+    return {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: () => {},
+        get: () => {},
+        set: () => {}
+    };
 };
+
+const stubProto = () => function() {};
+['Element', 'HTMLElement', 'HTMLIFrameElement', 'HTMLMediaElement', 'Storage', 'Attr', 'Node', 'Document'].forEach(className => {
+    if (typeof self[className] === 'undefined') {
+        self[className] = stubProto();
+    }
+});
 
 importScripts('/scram/scramjet.js');
 
@@ -24,16 +37,14 @@ async function handleRequest(event) {
     if (uv.route(event)) {
         return await uv.fetch(event);
     }
-
     try {
         await scramjet.loadConfig();
         if (scramjet.route(event)) {
             return await scramjet.fetch(event);
         }
     } catch (err) {
-        console.error("Scramjet SW fetch error:", err);
+        console.error("Scramjet SW error:", err);
     }
-
     return await fetch(event.request);
 }
 
