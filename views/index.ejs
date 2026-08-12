@@ -156,7 +156,7 @@
             }
 
             try {
-                const { ScramjetController } = $scramjet();
+                const { ScramjetController } = window.$scramjet || $scramjet;
                 const scramjet = new ScramjetController({
                     prefix: "/scram/service/",
                     files: {
