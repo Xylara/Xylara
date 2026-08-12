@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xylara</title>
     <script src="https://app.rybbit.io/api/script.js" data-site-id="8b65ec526edf" defer></script>
-    <link rel="prefetch" href="/scram/scramjet_bundled.js" />
-    <script src="/scram/scramjet_bundled.js"></script>
+    <link rel="prefetch" href="/scram/scramjet.js" />
+    <script src="/scram/scramjet.js"></script>
     <script src="/baremux"></script>
     <script src="/epoxy"></script>
     <link rel="icon" type="image/png" src="/assets/favicon.png">
@@ -122,42 +122,60 @@
             background-color: rgba(0, 0, 0, 0.7);
         }
     </style>
-    <script>
-        async function uvEncode(url) {
-            const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
-            localStorage.setItem("url", encodedUrl);
-            window.location.href = "/search";
-        }
+<script>
+    async function uvEncode(url) {
+        const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
+        localStorage.setItem("url", encodedUrl);
+        window.location.href = "/search";
+    }
 
-        async function sjEncode(url) {
-            const encodedUrl = "/scram/service/" + encodeURIComponent(url);
-            localStorage.setItem("url", encodedUrl);
-            window.location.href = "/search";
+    async function sjEncode(url) {
+        let encodedUrl;
+        if (window.sj && typeof window.sj.encodeUrl === 'function') {
+            encodedUrl = window.sj.encodeUrl(url);
+        } else {
+            encodedUrl = "/scram/service/" + encodeURIComponent(url);
         }
+        localStorage.setItem("url", encodedUrl);
+        window.location.href = "/search";
+    }
 
-        async function init() {
-            try {
-                const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
-                let transport = localStorage.getItem("transport") || "libcurl";
-                localStorage.setItem("transport", transport);
-                let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
-                if (localStorage.getItem("wisp-server-type") === "custom") {
-                    const customWisp = localStorage.getItem("wisp");
-                    if (customWisp) wispUrl = customWisp;
-                } else {
-                    localStorage.setItem("wisp", wispUrl);
-                }
-                const transportPath = transport === "epoxy" ? "/epoxy/index.mjs" : "/libcurl/index.mjs";
-                if (await connection.getTransport() !== transportPath) {
-                    await connection.setTransport(transportPath, [{ wisp: wispUrl }]);
-                }
-            } catch (err) {
-                console.error(err);
+    async function init() {
+        // BareMux Initialization
+        try {
+            const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+            let transport = localStorage.getItem("transport") || "libcurl";
+            localStorage.setItem("transport", transport);
+            let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+            
+            if (localStorage.getItem("wisp-server-type") === "custom") {
+                const customWisp = localStorage.getItem("wisp");
+                if (customWisp) wispUrl = customWisp;
+            } else {
+                localStorage.setItem("wisp", wispUrl);
             }
 
-            try {
-                const { ScramjetController } = window.$scramjet || $scramjet;
-                const scramjet = new ScramjetController({
+            const transportPath = transport === "epoxy" ? "/epoxy/index.mjs" : "/libcurl/index.mjs";
+            if (await connection.getTransport() !== transportPath) {
+                await connection.setTransport(transportPath, [{ wisp: wispUrl }]);
+            }
+        } catch (err) {
+            console.error("BareMux init error:", err);
+        }
+
+        // Safe Scramjet Controller Resolution & Initialization
+        try {
+            let ControllerClass;
+
+            if (typeof window.$scramjetLoadController === 'function') {
+                const loaded = window.$scramjetLoadController();
+                ControllerClass = loaded.ScramjetController || loaded;
+            } else if (window.$scramjet) {
+                ControllerClass = window.$scramjet.ScramjetController || window.$scramjet.Controller || window.$scramjet;
+            }
+
+            if (typeof ControllerClass === 'function') {
+                const scramjet = new ControllerClass({
                     prefix: "/scram/service/",
                     files: {
                         wasm: "/scram/scramjet.wasm",
@@ -166,114 +184,129 @@
                 });
                 window.sj = scramjet;
                 await scramjet.init();
-            } catch (error) {
-                console.error(error);
+            } else {
+                console.warn("Scramjet controller not available on window object.");
             }
+        } catch (error) {
+            console.error("Scramjet init error:", error);
         }
+    }
 
-        function resetSiteData() {
-            if (confirm("Reset all settings, custom apps, and site data?")) {
-                localStorage.clear();
-                if (navigator.serviceWorker) {
-                    navigator.serviceWorker.getRegistrations().then(registrations => {
-                        for (let r of registrations) r.unregister();
-                    });
-                }
-                window.location.reload();
+    function resetSiteData() {
+        if (confirm("Reset all settings, custom apps, and site data?")) {
+            localStorage.clear();
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    for (let r of registrations) r.unregister();
+                });
             }
+            window.location.reload();
         }
+    }
 
-        if (navigator.serviceWorker) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                if (registrations.length === 0) {
-                    navigator.serviceWorker.register("sw.js").catch(err => console.error(err));
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+            if (registrations.length === 0) {
+                navigator.serviceWorker.register("sw.js").catch(err => console.error("SW Registration error:", err));
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        init();
+
+        const defaultBg = '/assets/backgrounds/foggy-forest.png';
+        let bg = localStorage.getItem('bg') || defaultBg;
+        document.body.style.backgroundImage = `url('${bg}')`;
+        const savedFont = localStorage.getItem('font');
+        if (savedFont) document.body.style.fontFamily = savedFont;
+
+        const searchInput = document.querySelector('.search-input');
+        const searchButton = document.querySelector('.search-button');
+        const appButtonsDiv = document.querySelector('.app-buttons');
+        const addAppButton = document.getElementById('add-app-button');
+
+        const encodeURL = async (url) => {
+            let proxyType = localStorage.getItem('proxy') || 'ultraviolet';
+            proxyType === 'ultraviolet' ? await uvEncode(url) : await sjEncode(url);
+        };
+
+        const handleSearch = async () => {
+            const query = searchInput ? searchInput.value.trim() : '';
+            if (!query) return;
+            let url;
+            let isLikelySearch = false;
+            try {
+                url = (query.startsWith('http://') || query.startsWith('https://')) ? new URL(query) : new URL('https://' + query);
+                if (!url.hostname || !url.hostname.includes('.')) isLikelySearch = true;
+            } catch (e) {
+                isLikelySearch = true;
+            }
+            if (isLikelySearch) url = new URL((localStorage.getItem('search') || 'https://www.google.com/search?q=') + query);
+            await encodeURL(url.toString());
+        };
+
+        const createAppButton = (appName, appUrl) => {
+            const appButton = document.createElement('a');
+            appButton.href = '#';
+            appButton.classList.add('app-button');
+            appButton.textContent = appName;
+            appButton.addEventListener('click', (e) => { e.preventDefault(); encodeURL(appUrl); });
+            appButton.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                const index = apps.findIndex(a => a.name === appButton.textContent);
+                if (index > -1) {
+                    apps.splice(index, 1);
+                    localStorage.setItem('apps', JSON.stringify(apps));
+                    appButton.remove();
                 }
             });
-        }
+            return appButton;
+        };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            init();
-            const defaultBg = '/assets/backgrounds/foggy-forest.png';
-            let bg = localStorage.getItem('bg') || defaultBg;
-            document.body.style.backgroundImage = `url('${bg}')`;
-            const savedFont = localStorage.getItem('font');
-            if (savedFont) document.body.style.fontFamily = savedFont;
-
-            const searchInput = document.querySelector('.search-input');
-            const searchButton = document.querySelector('.search-button');
-            const appButtonsDiv = document.querySelector('.app-buttons');
-            const addAppButton = document.getElementById('add-app-button');
-
-            const encodeURL = async (url) => {
-                let proxyType = localStorage.getItem('proxy') || 'ultraviolet';
-                proxyType === 'ultraviolet' ? await uvEncode(url) : await sjEncode(url);
-            };
-
-            const handleSearch = async () => {
-                const query = searchInput.value.trim();
-                if (!query) return;
-                let url;
-                let isLikelySearch = false;
-                try {
-                    url = (query.startsWith('http://') || query.startsWith('https://')) ? new URL(query) : new URL('https://' + query);
-                    if (!url.hostname || !url.hostname.includes('.')) isLikelySearch = true;
-                } catch (e) {
-                    isLikelySearch = true;
-                }
-                if (isLikelySearch) url = new URL((localStorage.getItem('search') || 'https://www.google.com/search?q=') + query);
-                await encodeURL(url.toString());
-            };
-
-            const createAppButton = (appName, appUrl) => {
-                const appButton = document.createElement('a');
-                appButton.href = '#';
-                appButton.classList.add('app-button');
-                appButton.textContent = appName;
-                appButton.addEventListener('click', (e) => { e.preventDefault(); encodeURL(appUrl); });
-                appButton.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                    const index = apps.findIndex(a => a.name === appButton.textContent);
-                    if (index > -1) {
-                        apps.splice(index, 1);
-                        localStorage.setItem('apps', JSON.stringify(apps));
-                        appButton.remove();
-                    }
-                });
-                return appButton;
-            };
-
-            let apps = JSON.parse(localStorage.getItem('apps') || '[]');
+        let apps = JSON.parse(localStorage.getItem('apps') || '[]');
+        if (appButtonsDiv && addAppButton) {
             apps.forEach(app => {
                 const btn = createAppButton(app.name, app.url);
                 appButtonsDiv.insertBefore(btn, addAppButton);
             });
+        }
 
-            const addAppModal = document.getElementById('add-app-modal');
-            const addAppSubmit = document.getElementById('add-app-submit');
-            const addAppCancel = document.getElementById('add-app-cancel');
-            const appNameInput = document.getElementById('app-name');
-            const appUrlInput = document.getElementById('app-url');
+        const addAppModal = document.getElementById('add-app-modal');
+        const addAppSubmit = document.getElementById('add-app-submit');
+        const addAppCancel = document.getElementById('add-app-cancel');
+        const appNameInput = document.getElementById('app-name');
+        const appUrlInput = document.getElementById('app-url');
 
+        if (addAppButton && addAppModal) {
             addAppButton.addEventListener('click', () => addAppModal.style.display = 'flex');
+        }
+        if (addAppCancel && addAppModal) {
             addAppCancel.addEventListener('click', () => addAppModal.style.display = 'none');
+        }
+        if (addAppSubmit && addAppModal) {
             addAppSubmit.addEventListener('click', () => {
-                const name = appNameInput.value;
-                let url = appUrlInput.value;
+                const name = appNameInput ? appNameInput.value : '';
+                let url = appUrlInput ? appUrlInput.value : '';
                 if (url && !url.startsWith('http')) url = 'https://' + url;
                 if (name && url) {
                     apps.push({ name, url });
                     localStorage.setItem('apps', JSON.stringify(apps));
-                    const btn = createAppButton(name, url);
-                    appButtonsDiv.insertBefore(btn, addAppButton);
+                    if (appButtonsDiv && addAppButton) {
+                        const btn = createAppButton(name, url);
+                        appButtonsDiv.insertBefore(btn, addAppButton);
+                    }
                     addAppModal.style.display = 'none';
-                    appNameInput.value = ''; appUrlInput.value = '';
+                    if (appNameInput) appNameInput.value = ''; 
+                    if (appUrlInput) appUrlInput.value = '';
                 }
             });
+        }
 
-            searchButton.addEventListener('click', handleSearch);
-            searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSearch(); });
-        });
-    </script>
+        if (searchButton) searchButton.addEventListener('click', handleSearch);
+        if (searchInput) searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSearch(); });
+    });
+</script>
 </head>
 <body>
     <%- include('parts/topbar.ejs') %>
